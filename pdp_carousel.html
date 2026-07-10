@@ -113,10 +113,10 @@
           <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
         </div>
         <div class="acc-body">
-          <div class="fopt checked" data-chip="Casual streetwear">Casual streetwear</div>
-          <div class="fopt checked" data-chip="Sporty Chic">Sporty Chic</div>
-          <div class="fopt checked" data-chip="Basic effortless">Basic effortless</div>
-          <div class="fopt checked" data-chip="Evening">Evening</div>
+          <div class="fopt" data-chip="Casual streetwear">Casual streetwear</div>
+          <div class="fopt" data-chip="Sporty Chic">Sporty Chic</div>
+          <div class="fopt" data-chip="Basic effortless">Basic effortless</div>
+          <div class="fopt" data-chip="Evening">Evening</div>
         </div>
       </div>
 
@@ -126,9 +126,9 @@
           <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
         </div>
         <div class="acc-body">
-          <div class="fopt checked">Exemple</div>
-          <div class="fopt checked">Exemple</div>
-          <div class="fopt checked">Exemple</div>
+          <div class="fopt">Exemple</div>
+          <div class="fopt">Exemple</div>
+          <div class="fopt">Exemple</div>
         </div>
       </div>
 
@@ -138,9 +138,9 @@
           <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
         </div>
         <div class="acc-body">
-          <div class="fopt checked">Exemple</div>
-          <div class="fopt checked">Exemple</div>
-          <div class="fopt checked">Exemple</div>
+          <div class="fopt">Exemple</div>
+          <div class="fopt">Exemple</div>
+          <div class="fopt">Exemple</div>
         </div>
       </div>
 
@@ -235,12 +235,12 @@
     var drawer = document.getElementById('filter-drawer');
 
     document.getElementById('filter-open-btn').addEventListener('click', function() {
+      syncFilterToActive();
       drawer.classList.add('open');
     });
 
     document.getElementById('filter-close').addEventListener('click', function() {
       drawer.classList.remove('open');
-      applyFilters();
     });
 
     document.querySelectorAll('.acc-header').forEach(function(h) {
@@ -251,30 +251,26 @@
 
     document.querySelectorAll('.fopt').forEach(function(opt) {
       opt.addEventListener('click', function() {
-        opt.classList.toggle('checked');
+        if (!opt.dataset.chip) return;
+        // Switch active chip
+        var target = document.querySelector('.chip[data-images][data-chip-label="' + opt.dataset.chip + '"]') ||
+          Array.from(allChips).find(function(c) { return c.textContent.trim() === opt.dataset.chip; });
+        if (target) {
+          allChips.forEach(function(x) { x.classList.remove('active'); });
+          target.classList.add('active');
+          if (target.dataset.images) loadImages(target.dataset.images.split(','));
+        }
+        drawer.classList.remove('open');
       });
     });
 
-    function applyFilters() {
-      var checked = {};
-      document.querySelectorAll('.fopt.checked').forEach(function(o) {
-        checked[o.dataset.chip] = true;
-      });
-      var firstVisible = null;
-      allChips.forEach(function(c) {
-        var label = c.textContent.trim();
-        var visible = !!checked[label];
-        c.classList.toggle('hidden', !visible);
-        if (visible && !firstVisible) firstVisible = c;
-      });
+    function syncFilterToActive() {
+      var activeLabel = '';
       var active = document.querySelector('.chip.active');
-      if (!active || active.classList.contains('hidden')) {
-        if (firstVisible) {
-          allChips.forEach(function(x) { x.classList.remove('active'); });
-          firstVisible.classList.add('active');
-          if (firstVisible.dataset.images) loadImages(firstVisible.dataset.images.split(','));
-        }
-      }
+      if (active) activeLabel = active.textContent.trim();
+      document.querySelectorAll('.fopt').forEach(function(o) {
+        o.classList.toggle('checked', o.dataset.chip === activeLabel);
+      });
     }
   </script>
 
