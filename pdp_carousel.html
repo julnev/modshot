@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <title>PDP</title>
+  <style>
+    @font-face { font-family: 'FranklinGothic'; src: url('./ITCFranklinGothicStd-DmCp.otf') format('opentype'); }
+    @font-face { font-family: 'AdihausDIN'; src: url('./AdihausDIN-Regular.ttf') format('truetype'); }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #0f0f0f; overflow: hidden; font-family: 'AdihausDIN', -apple-system, sans-serif; }
+
+    /* Image area wrapper — clips the filter drawer */
+    #image-area { position: fixed; top: 0; left: 0; right: 0; bottom: 160px; overflow: hidden; }
+
+    /* Carousel */
+    #carousel-wrap { position: absolute; top: 0; left: 0; right: 0; bottom: 0; overflow: hidden; }
+    #carousel-track { display: flex; width: 300%; height: 100%; transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .slide { width: 33.333%; height: 100%; flex-shrink: 0; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center 52%; display: block; }
+
+    /* Slider bar */
+    #slider-bar { position: fixed; bottom: 156px; left: 0; height: 2px; background: #111; z-index: 20; transition: left 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
+
+    /* Bottom panel */
+    #bottom { position: fixed; bottom: 0; left: 0; right: 0; height: 160px; background: #fff; display: flex; flex-direction: column; padding: 12px 20px 20px; z-index: 10; }
+
+    #chips-row { display: flex; align-items: center; flex-shrink: 0; margin-bottom: 16px; margin-right: -20px; }
+
+    .filter-btn { flex-shrink: 0; border: none; background: #fff; padding: 0 10px 0 0; cursor: pointer; display: flex; align-items: center; }
+
+    #chips { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+    #chips::-webkit-scrollbar { display: none; }
+
+    .chip { display: inline-block; flex-shrink: 0; padding: 6px 14px; border-radius: 0; font-size: 16px; line-height: 24px; font-family: 'AdihausDIN', sans-serif; cursor: pointer; white-space: nowrap; letter-spacing: 0; border: 1px solid #111; transition: background 0.15s, color 0.15s; }
+    .chip.active { background: #111; color: #fff; }
+    .chip:not(.active) { background: #fff; color: #111; }
+    .chip.hidden { display: none; }
+
+    #product-name { font-family: 'FranklinGothic', sans-serif; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; color: #111; line-height: 1.1; margin-bottom: 4px; }
+    #product-sub { font-size: 12px; color: #888; margin-bottom: 4px; }
+    #product-price { font-size: 13px; font-weight: 600; color: #111; }
+
+    /* Filter drawer — covers image area, slides up */
+    #filter-drawer {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #fff;
+      z-index: 10;
+      transform: translateY(100%);
+      transition: transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
+      overflow-y: auto;
+    }
+    #filter-drawer.open { transform: translateY(0); }
+
+    #filter-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none; cursor: pointer; padding: 4px; z-index: 1;
+    }
+
+    #filter-body { padding: 56px 20px 20px; }
+
+    .acc { border-bottom: 1px solid #e0e0e0; }
+    .acc-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 0; cursor: pointer; user-select: none;
+    }
+    .acc-title { font-family: 'FranklinGothic', sans-serif; font-size: 28px; letter-spacing: 0.04em; text-transform: uppercase; color: #111; }
+    .acc-chevron { transition: transform 0.25s; }
+    .acc.open .acc-chevron { transform: rotate(180deg); }
+    .acc-body { display: none; flex-wrap: wrap; gap: 8px; padding-bottom: 20px; }
+    .acc.open .acc-body { display: flex; }
+
+    .fopt {
+      display: inline-block;
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 0;
+      font-size: 16px;
+      line-height: 24px;
+      font-family: 'AdihausDIN', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: 0;
+      border: 1px solid #111;
+      transition: background 0.15s, color 0.15s;
+    }
+    .fopt.checked { background: #111; color: #fff; }
+    .fopt:not(.checked) { background: #fff; color: #111; }
+  </style>
+</head>
+<body>
+
+  <div id="image-area">
+    <div id="carousel-wrap">
+      <div id="carousel-track"></div>
+    </div>
+
+    <!-- Filter drawer -->
+    <div id="filter-drawer">
+    <button id="filter-close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <line x1="4" y1="4" x2="20" y2="20" stroke="#111" stroke-width="1.5"/>
+        <line x1="20" y1="4" x2="4" y2="20" stroke="#111" stroke-width="1.5"/>
+      </svg>
+    </button>
+    <div id="filter-body">
+
+      <div class="acc open">
+        <div class="acc-header">
+          <span class="acc-title">Occasion</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt checked" data-chip="Casual streetwear">Casual streetwear</div>
+          <div class="fopt checked" data-chip="Sporty Chic">Sporty Chic</div>
+          <div class="fopt checked" data-chip="Basic effortless">Basic effortless</div>
+          <div class="fopt checked" data-chip="Evening">Evening</div>
+        </div>
+      </div>
+
+      <div class="acc">
+        <div class="acc-header">
+          <span class="acc-title">Location</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt checked">Exemple</div>
+          <div class="fopt checked">Exemple</div>
+          <div class="fopt checked">Exemple</div>
+        </div>
+      </div>
+
+      <div class="acc">
+        <div class="acc-header">
+          <span class="acc-title">Vibe</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt checked">Exemple</div>
+          <div class="fopt checked">Exemple</div>
+          <div class="fopt checked">Exemple</div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- end filter-drawer -->
+  </div><!-- end image-area -->
+
+  <div id="slider-bar"></div>
+
+  <!-- Bottom panel -->
+  <div id="bottom">
+    <div id="chips-row">
+      <button class="filter-btn" id="filter-open-btn" aria-label="Filtres">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M24 21V24H20V23H8V22H20V21H24ZM18 15H24V16H18V17H14V16H8V15H14V14H18V15ZM12 9H24V10H12V11H8V8H12V9Z" fill="black"/></svg>
+      </button>
+      <div id="chips">
+        <div class="chip active" data-images="1.jpg,2.jpg,3.jpg,7.jpg">Casual streetwear</div>
+        <div class="chip" data-images="4.jpg,7.jpg">Sporty Chic</div>
+        <div class="chip" data-images="5.jpg,7.jpg">Basic effortless</div>
+        <div class="chip" data-images="6.jpg,7.jpg">Evening</div>
+      </div>
+    </div>
+    <div>
+      <div id="product-name">ADICOLOR SST COTTON TWILL SHORT</div>
+      <div id="product-sub">Originals</div>
+      <div id="product-price">120 €</div>
+    </div>
+  </div>
+
+  <script>
+    // ── Carousel ──
+    var wrap = document.getElementById('carousel-wrap');
+    var track = document.getElementById('carousel-track');
+    var sliderBar = document.getElementById('slider-bar');
+    var allChips = document.querySelectorAll('.chip');
+    var current = 0, total = 1;
+
+    function loadImages(images) {
+      current = 0;
+      total = images.length;
+      track.style.transition = 'none';
+      track.style.width = (total * 100) + '%';
+      track.innerHTML = images.map(function(src) {
+        return '<div class="slide" style="width:' + (100/total) + '%"><img src="./' + src + '"/></div>';
+      }).join('');
+      track.style.transform = 'translateX(0)';
+      sliderBar.style.width = (100 / total) + 'vw';
+      sliderBar.style.left = '0';
+    }
+
+    function goTo(i) {
+      current = Math.max(0, Math.min(total - 1, i));
+      track.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+      track.style.transform = 'translateX(-' + ((100 / total) * current) + '%)';
+      sliderBar.style.left = ((100 / total) * current) + 'vw';
+    }
+
+    var startX = 0, dragging = false;
+    function onStart(x) { startX = x; dragging = true; track.style.transition = 'none'; }
+    function onMove(x) {
+      if (!dragging) return;
+      var dx = x - startX;
+      var pct = -(100 / total) * current + (dx / wrap.offsetWidth) * (100 / total) * 1.2;
+      track.style.transform = 'translateX(' + pct + '%)';
+    }
+    function onEnd(x) {
+      if (!dragging) return;
+      dragging = false;
+      var dx = x - startX;
+      goTo(Math.abs(dx) > 40 ? (dx < 0 ? current + 1 : current - 1) : current);
+    }
+
+    wrap.addEventListener('touchstart', function(e) { onStart(e.touches[0].clientX); }, {passive:true});
+    wrap.addEventListener('touchmove',  function(e) { onMove(e.touches[0].clientX); }, {passive:true});
+    wrap.addEventListener('touchend',   function(e) { onEnd(e.changedTouches[0].clientX); });
+    wrap.addEventListener('mousedown',  function(e) { onStart(e.clientX); });
+    window.addEventListener('mousemove', function(e) { if (dragging) onMove(e.clientX); });
+    window.addEventListener('mouseup',   function(e) { if (dragging) onEnd(e.clientX); });
+
+    allChips.forEach(function(c) {
+      c.addEventListener('click', function() {
+        allChips.forEach(function(x) { x.classList.remove('active'); });
+        c.classList.add('active');
+        if (c.dataset.images) loadImages(c.dataset.images.split(','));
+      });
+    });
+
+    var activeChip = document.querySelector('.chip.active');
+    if (activeChip && activeChip.dataset.images) loadImages(activeChip.dataset.images.split(','));
+
+    // ── Filter drawer ──
+    var drawer = document.getElementById('filter-drawer');
+
+    document.getElementById('filter-open-btn').addEventListener('click', function() {
+      drawer.classList.add('open');
+    });
+
+    document.getElementById('filter-close').addEventListener('click', function() {
+      drawer.classList.remove('open');
+      applyFilters();
+    });
+
+    document.querySelectorAll('.acc-header').forEach(function(h) {
+      h.addEventListener('click', function() {
+        h.parentElement.classList.toggle('open');
+      });
+    });
+
+    document.querySelectorAll('.fopt').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        opt.classList.toggle('checked');
+      });
+    });
+
+    function applyFilters() {
+      var checked = {};
+      document.querySelectorAll('.fopt.checked').forEach(function(o) {
+        checked[o.dataset.chip] = true;
+      });
+      var firstVisible = null;
+      allChips.forEach(function(c) {
+        var label = c.textContent.trim();
+        var visible = !!checked[label];
+        c.classList.toggle('hidden', !visible);
+        if (visible && !firstVisible) firstVisible = c;
+      });
+      var active = document.querySelector('.chip.active');
+      if (!active || active.classList.contains('hidden')) {
+        if (firstVisible) {
+          allChips.forEach(function(x) { x.classList.remove('active'); });
+          firstVisible.classList.add('active');
+          if (firstVisible.dataset.images) loadImages(firstVisible.dataset.images.split(','));
+        }
+      }
+    }
+  </script>
+
+</body>
+</html>
