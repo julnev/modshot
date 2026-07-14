@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+  <title>Originals</title>
+  <style>
+    @font-face { font-family: 'FranklinGothic'; src: url('./ITCFranklinGothicStd-DmCp.otf') format('opentype'); }
+    @font-face { font-family: 'AdihausDIN'; src: url('./AdihausDIN-Regular.ttf') format('truetype'); }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #EAEEEF; font-family: 'AdihausDIN', -apple-system, sans-serif; overflow: hidden; }
+
+    /* ── Header ── */
+    #header {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 52px; background: #fff;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 16px;
+      z-index: 100;
+    }
+    .header-icon { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; }
+    #header-center { text-align: center; }
+    #header-title { font-family: 'FranklinGothic', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #111; }
+    #header-sub { font-size: 11px; color: #888; }
+
+    /* ── Environment nav ── */
+    #env-nav {
+      position: fixed; top: 52px; left: 0; right: 0;
+      height: 40px; background: #fff;
+      display: flex; align-items: flex-end;
+      overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
+      touch-action: pan-x;
+      border-bottom: 1px solid #e0e0e0;
+      z-index: 50;
+      transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    #env-nav::-webkit-scrollbar { display: none; }
+    #env-nav-plus {
+      position: sticky; left: 0; z-index: 1;
+      flex-shrink: 0; display: flex; align-items: center;
+      padding: 0 8px 10px 16px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .env-tab {
+      flex-shrink: 0;
+      padding: 0 16px 10px;
+      font-family: 'FranklinGothic', sans-serif;
+      font-size: 16px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #888; cursor: pointer; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .env-tab.active { color: #111; border-bottom-color: #111; }
+
+    /* ── Filter chips ── */
+    #filter-row {
+      position: fixed; top: 92px; left: 0; right: 0;
+      height: 48px; background: #fff;
+      display: flex; align-items: center;
+      padding: 0 16px;
+      z-index: 50;
+      border-bottom: 1px solid #e0e0e0;
+      transition: transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    /* ── Scroll-collapse state ── */
+    body.nav-collapsed #env-nav   { transform: translateY(-40px); }
+    body.nav-collapsed #filter-row { transform: translateY(-88px); }
+    body.nav-collapsed #scroll-area { top: 52px; }
+    .filter-btn {
+      flex-shrink: 0; border: none; background: none;
+      padding: 0 10px 0 0; cursor: pointer; display: flex; align-items: center;
+    }
+    #cat-chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+    #cat-chips::-webkit-scrollbar { display: none; }
+    .cat-chip {
+      flex-shrink: 0; padding: 4px 10px;
+      border-radius: 0; border: 1px solid #111;
+      font-size: 13px; line-height: 20px;
+      font-family: 'AdihausDIN', sans-serif;
+      cursor: pointer; white-space: nowrap; letter-spacing: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .cat-chip.active { background: #111; color: #fff; }
+    .cat-chip:not(.active) { background: #fff; color: #111; }
+
+    /* ── Looks grid ── */
+    #scroll-area {
+      position: fixed; top: 140px; left: 0; right: 0; bottom: 80px;
+      overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+      transition: top 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    body.nav-collapsed #scroll-area { top: 52px; }
+
+    #grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px; padding: 2px 2px 80px;
+    }
+
+    .look-card {
+      position: relative;
+      overflow: hidden;
+      background: #eee;
+      aspect-ratio: 9/14;
+    }
+
+    /* Carousel track — full card size, horizontal */
+    .look-track {
+      position: absolute; inset: 0;
+      display: flex; height: 100%;
+      transition: transform 0.32s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .look-slide {
+      width: 100%; height: 100%; flex-shrink: 0;
+    }
+
+    /* Slide 1: look photo */
+    .look-slide img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;
+    }
+
+    /* Slide 2+: product card */
+    .look-slide.is-product {
+      background: #fff;
+      display: flex; flex-direction: column;
+      padding: 0;
+      justify-content: flex-start;
+    }
+    .prod-card-img {
+      flex: none;
+      height: 62%;
+      display: flex; align-items: center; justify-content: center;
+      background: #EAEEEF;
+    }
+    .prod-card-img img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+    .prod-card-price {
+      font-family: 'FranklinGothic', sans-serif;
+      font-size: 16px; color: #111; margin-top: 12px;
+      padding: 0 16px;
+    }
+    .prod-card-name {
+      font-family: 'AdihausDIN', sans-serif;
+      font-size: 11px; color: #555; margin-top: 4px;
+      padding: 0 16px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .prod-card-swatches {
+      display: flex; gap: 5px; margin-top: 10px;
+    }
+    .swatch { width: 18px; height: 2px; }
+
+    /* Pagination dots */
+    .look-dots {
+      position: absolute; bottom: 13px; left: 0; right: 0;
+      display: flex; justify-content: center; gap: 4px; pointer-events: none;
+    }
+    .look-dot {
+      width: 16px; height: 2px; background: rgba(255,255,255,0.45);
+      transition: background 0.2s;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.35));
+    }
+    .look-dot.active { background: #fff; }
+
+    /* ── Bottom dock bar ── */
+    #products-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: #EAEEEF;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      display: flex; align-items: flex-end;
+      padding: 0 4px; gap: 0;
+      overflow-x: auto; scrollbar-width: none;
+      z-index: 50;
+    }
+    #products-bar::-webkit-scrollbar { display: none; }
+
+    .look-shelf {
+      flex-shrink: 0; display: flex; align-items: flex-end;
+      gap: 8px; padding: 0 4px;
+      height: 52px;
+      background: transparent;
+      transition: height 0.3s cubic-bezier(0.34,1.2,0.64,1);
+      will-change: height;
+    }
+    #products-bar::before, #products-bar::after {
+      content: ''; display: block; min-width: 44vw; flex-shrink: 0;
+    }
+
+    .prod-thumb-item {
+      flex-shrink: 0; cursor: pointer;
+    }
+    .look-shelf { border-bottom: 2px solid transparent; }
+    .prod-thumb {
+      width: 62px; height: 76px;
+      object-fit: contain; display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div id="header">
+    <button class="header-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="15 18 9 12 15 6" stroke="#111" stroke-width="1.5"/></svg>
+    </button>
+    <div id="header-center">
+      <div id="header-title">Originals</div>
+      <div id="header-sub">153 results</div>
+    </div>
+    <button class="header-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="1.5"/><line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#111" stroke-width="1.5"/></svg>
+    </button>
+  </div>
+
+  <!-- Environment nav -->
+  <div id="env-nav">
+    <div id="env-nav-plus">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 15H24V16H16V24H15V16H7V15H15V7H16V15Z" fill="black"/></svg>
+    </div>
+    <div class="env-tab active">Parisian Mood</div>
+    <div class="env-tab">At School</div>
+    <div class="env-tab">Summer Festivals</div>
+    <div class="env-tab">Evening Out</div>
+    <div class="env-tab">Weekend</div>
+  </div>
+
+  <!-- Filter chips -->
+  <div id="filter-row">
+    <div id="cat-chips">
+      <div class="cat-chip active">All</div>
+      <div class="cat-chip">T-Shirts</div>
+      <div class="cat-chip">Tops</div>
+      <div class="cat-chip">Jackets</div>
+      <div class="cat-chip">Pants</div>
+      <div class="cat-chip">Shorts</div>
+    </div>
+  </div>
+
+  <!-- Look rows -->
+  <div id="scroll-area">
+    <div id="grid"></div>
+  </div>
+
+  <div id="products-bar"></div>
+
+  <script>
+    // ── Data ──
+    var looks_school = [
+      { id: 'l0',  images: ['school/Avatar_KD8313_2026-05-18_22-07-15 3.png'], products: [{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"}] },
+      { id: 'l1',  images: ['school/Avatar_KD3816_KF6248_2026-07-04_23-05-13 1.png'], products: [{"code":"KD3816","name":"ARCHIVE LOOSE GOALKEEPER JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD3816/60c2308495f3492eb84e518621ac6afc_9366/original.jpg"}] },
+      { id: 'l2',  images: ['school/Avatar_KD5523_KD4096_2026-07-07_10-01-13 2.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KD4096","name":"ADICOLOR 3-STRIPES OVERSIZED TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD4096/bc5361bbdb7347af87ae19e0e37976a4_9366/original.jpg"}] },
+      { id: 'l3',  images: ['school/Avatar_KW0122_KE3449_2026-06-30_16-05-56 1.png'], products: [{"code":"KW0122","name":"SPRINTER SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW0122/ea993c14075944289a39b510998cdbd5_9366/original.jpg"},{"code":"KE3449","name":"TIPPED STRIPES HOODIE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3449/9a0457a8849e4f6dae995579dfbef448_9366/original.jpg"}] },
+      { id: 'l4',  images: ['school/Avatar_KS6562_JP1037_KD4096_2026-06-02_09-53-34 3.png'], products: [{"code":"KS6562","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6562/251edb57407348ffb26f8373714f3a63_9366/original.jpg"},{"code":"JP1037","name":"ADICOLOR PANEL TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/JP1037/48ab9cc77de84a97a1b0c68d6aa5549a_9366/original.jpg"},{"code":"KD4096","name":"ADICOLOR 3-STRIPES OVERSIZED TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD4096/bc5361bbdb7347af87ae19e0e37976a4_9366/original.jpg"}] },
+      { id: 'l5',  images: ['school/Avatar_KX3755_KG6450_KX1868_2026-06-01_21-20-45_Generated 1.png'], products: [{"code":"KG6450","name":"ORIGINALS DENIM WORK PANT","img":"school/KG6450_FC_eCom.png"},{"code":"KX1868","name":"TRACKTOP OG TWEED","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KX1868/bc37691afb494d0c915703582e504fcd_9366/original.jpg"}] },
+      { id: 'l6',  images: ['school/Avatar_KD8313_KC8088_2026-06-25_09-52-22 2.png'], products: [{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KC8088","name":"BALLOON LONG SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC8088/37becfe9e70c4810b4eca7f7cf2faf3c_9366/original.jpg"}] },
+      { id: 'l7',  images: ['school/Avatar_KD5523_KW4387_2026-06-25_17-05-08 2.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KW4387","name":"MUNICH 93 CREW NECK SWEATSHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW4387/3f7d0659f74f4fefa3fe66db99439340_9366/original.jpg"}] },
+      { id: 'l8',  images: ['school/Avatar_KE3584_KE2923_2026-05-21_10-05-45 1.png'], products: [{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KE2923","name":"ADICOLOR CLASSICS 3-STRIPES CARGO PANTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE2923/4ea6bc7206024c27b2d18944dd360c1a_9366/original.jpg"}] },
+      { id: 'l9',  images: ['school/Avatar_KD3816_KQ6469_2026-07-04_23-54-02 1.png'], products: [{"code":"KD3816","name":"ARCHIVE LOOSE GOALKEEPER JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD3816/60c2308495f3492eb84e518621ac6afc_9366/original.jpg"}] },
+      { id: 'l10', images: ['school/Avatar_KD8313_KQ5499_KE3441_2026-06-25_09-52-55 2.png'], products: [{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KQ5499","name":"FB KNIT TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KQ5499/e0fc1342c85b43acb647a911d96ff45c_9366/original.jpg"}] },
+      { id: 'l11', images: ['school/Avatar_KG6450_KR7657_KC6436_2026-06-25_14-26-19 1.png'], products: [{"code":"KG6450","name":"ORIGINALS DENIM WORK PANT","img":"school/KG6450_FC_eCom.png"},{"code":"KR7657","name":"RETRO REMIX TEAMGEIST POLO","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR7657/e809b759d42a40dbb05baadd3a3e2250_9366/original.jpg"},{"code":"KC6436","name":"CHEST STRIPES TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC6436/9a32987bb0fa483182ceb61ee182a3c9_9366/original.jpg"}] },
+      { id: 'l12', images: ['school/Avatar_KD5523_KR7228_2026-06-25_17-03-14 3.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KR7228","name":"FIREBIRD PINSTRIPES TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR7228/5e9d0d3707de4572a543a0663a45b96c_9366/original.jpg"}] },
+      { id: 'l13', images: ['school/Avatar_KR1389_KD0397_2026-06-24_16-07-01 2.png'], products: [{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"},{"code":"KD0397","name":"DENIM MONOGRAM SHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD0397/420bce8ad8d843e7afafe1f094f45b65_9366/original.jpg"}] },
+      { id: 'l14', images: ['school/Avatar_KG6450_KE2445_JV7735_2026-06-25_14-15-46 1.png'], products: [{"code":"KG6450","name":"ORIGINALS DENIM WORK PANT","img":"school/KG6450_FC_eCom.png"},{"code":"KE2445","name":"3-STRIPES RUGBY LONGSLEEVE POLO","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE2445/402a5c0a81e3465f95862d7e12ca2635_9366/original.jpg"},{"code":"JV7735","name":"TARTAN REGULAR JACKET","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/JV7735/fc71906114b3476683479c78e856ce2b_9366/original.jpg"}] },
+      { id: 'l15', images: ['school/Avatar_KD5523_KS1343_2026-07-07_09-59-35 2.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KS1343","name":"SONG FOR THE MUTE 007 LONG SLEEVE TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS1343/c778dc3a62bf4e8eb465bbf2d34ce324_9366/original.jpg"}] },
+      { id: 'l16', images: ['school/Avatar_KE3584_KF6248_KD8313_2026-07-05_11-01-57 1.png'], products: [{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"}] },
+      { id: 'l17', images: ['school/Avatar_KD8307_KS6562_2026-04-22_12-25-54 1.png'], products: [{"code":"KD8307","name":"FIREBIRD TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD8307/fd638d90d96d4110b8cb539cb9ca6f0c_9366/original.jpg"},{"code":"KS6562","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6562/251edb57407348ffb26f8373714f3a63_9366/original.jpg"}] },
+    ];
+
+    var looks_paris = [
+      { id:'p0',  images:["paris/Avatar_KR1389_KS0124_2026-06-23_14-17-33 4.png"],   products:[{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"},{"code":"KS0124","name":"RUNNING BANDANA","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS0124/4249ac24c6c74ca3882283f27abfb81b_9366/original.jpg"}] },
+      { id:'p1',  images:["paris/Avatar_KE3584_KA2673_2026-05-22_09-15-37 2.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KA2673","name":"SATIN SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KA2673/0d39825f7f2e4e28a6ab96fc981d5d14_9366/original.jpg"}] },
+      { id:'p2',  images:["paris/Avatar_KD8313_KE3440_2026-06-25_09-53-28 4.png"],   products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KE3440","name":"BALLOON SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3440/c132e4af945a482fb8042bdf3acf0699_9366/original.jpg"}] },
+      { id:'p3',  images:["paris/Avatar_KE1651_KF2341_2026-06-25_11-48-58 3.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"KF2341","name":"ATHLETIC DEPT KNITTED SWEATER","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KF2341/88a7b015895f4fa0bf922362a35993dd_9366/original.jpg"}] },
+      { id:'p4',  images:["paris/Avatar_KW0122_KD7964_2026-06-29_17-24-07 3.png"],   products:[{"code":"KW0122","name":"SPRINTER SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW0122/ea993c14075944289a39b510998cdbd5_9366/original.jpg"},{"code":"KD7964","name":"3-STRIPES LONG SLEEVE T-SHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD7964/353d4550363842c8bd401bad0aab1959_9366/original.jpg"}] },
+      { id:'p5',  images:["paris/Avatar_KG3699_KS6562_2026-05-18_11-05-03 1.png"],   products:[{"code":"KG3699","name":"SST BABY TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KG3699/90fff785aba64eb3b980f464ec4defc3_9366/original.jpg"},{"code":"KS6562","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6562/251edb57407348ffb26f8373714f3a63_9366/original.jpg"}] },
+      { id:'p6',  images:["paris/Avatar_KE3584_LD1811_2026-05-21_11-36-05 1.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"LD1811","name":"SATIN LACE SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/LD1811/1fbd36752eb34528bc5297c693264d09_9366/original.jpg"}] },
+      { id:'p7',  images:["paris/Avatar_KD8313_KC8869_KE3441_2026-06-25_16-25-39 1.png"], products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KC8869","name":"OFF-SHOULDER LONG SLEEVE TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC8869/6fbae356eeb3425484bf59f35500194f_9366/original.jpg"},{"code":"KE3441","name":"BALLOON LONG SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3441/7941dddf886446288c4499f48adabda9_9366/original.jpg"}] },
+      { id:'p8',  images:["paris/Avatar_KD8786_KR1389_2026-06-24_10-05-27_Generated 2.png"], products:[{"code":"KD8786","name":"PLEATHER CORSET","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD8786/6528b82389be402ba237a0eaa6ff8ab7_9366/original.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
+      { id:'p9',  images:["paris/Avatar_KE1651_HZ3779_2026-05-19_10-03-36 2.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"HZ3779","name":"BRITCORE SUPERSTAR TRACKTOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/HZ3779/167d11d33caa4726a8f3605e76097988_9366/original.jpg"}] },
+      { id:'p10', images:["paris/Avatar_KD3816_KD5446_2026-06-25_13-39-22 1.png"],   products:[{"code":"KD3816","name":"ARCHIVE LOOSE GOALKEEPER JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD3816/60c2308495f3492eb84e518621ac6afc_9366/original.jpg"},{"code":"KD5446","name":"TWILL PLEATED SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD5446/fdc8aaed60ba468a9a5d49ed18f17576_9366/original.jpg"}] },
+      { id:'p11', images:["paris/Avatar_KE3584_KD2927_2026-05-21_11-33-48 1.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KD2927","name":"FIREBIRD JORTS DENIM","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD2927/069cb5351e964cb587db4b327eb56921_9366/original.jpg"}] },
+      { id:'p12', images:["paris/Avatar_KD8313_KS6563_2026-04-22_11-26-38 3.png"],   products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KS6563","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6563/6e01dda122514c2c8e1e52dcf843c27b_9366/original.jpg"}] },
+      { id:'p13', images:["paris/Avatar_JX9212_2026-04-22_14-21-37 2 1.png"],        products:[{"code":"JX9212","name":"ADILENIUM BANANA FITTED WASHED DENIM PANTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/JX9212/1be8c42c5a7846d6884145dadc7adb69_9366/original.jpg"}] },
+      { id:'p14', images:["paris/Avatar_JJ0296_KR1389_2026-06-24_10-01-11 1.png"],   products:[{"code":"JJ0296","name":"EQT TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/JJ0296/7c6754ff5fa943b299019566e2b7a412_9366/original.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
+      { id:'p15', images:["paris/Avatar_KD8313_KC8088_2026-06-25_09-34-26 4.png"],   products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KC8088","name":"BALLOON LONG SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC8088/37becfe9e70c4810b4eca7f7cf2faf3c_9366/original.jpg"}] },
+    ];
+
+    // ── Fake prices & swatches ──
+    var fakePrices = {
+      'KG6450':'80 €','KD3816':'75 €','KD5523':'65 €','KD4096':'45 €',
+      'KW0122':'45 €','KE3449':'90 €','KS6562':'80 €','JP1037':'115 €',
+      'KX1868':'130 €','KD8313':'120 €','KC8088':'70 €','KE3584':'85 €',
+      'KE2923':'70 €','KQ5499':'110 €','KR7228':'110 €','KR1389':'50 €',
+      'KE1651':'70 €','KF2341':'100 €','KA2673':'55 €','KE3440':'70 €',
+      'KE3441':'75 €','KD7964':'45 €','KG3699':'40 €','LD1811':'65 €',
+      'KD8786':'90 €','HZ3779':'110 €','KD5446':'65 €','KD2927':'75 €',
+      'KS6563':'80 €','JX9212':'120 €','JJ0296':'55 €','KS0124':'20 €',
+      'KC8869':'60 €','KE2445':'95 €','KD8307':'120 €'
+    };
+    var swatchSets = [
+      ['#111','#1a3a5c','#4a2020'],
+      ['#111','#2a5c2a','#8b6914'],
+      ['#1a3a5c','#888','#f5f5f5'],
+      ['#111','#c0392b','#1a3a5c'],
+      ['#888','#111'],
+      ['#111','#2a5c2a'],
+      ['#4a2020','#111','#8b6914'],
+    ];
+
+    // ── Build grid ──
+    var grid = document.getElementById('grid');
+
+    function buildGrid(arr) {
+      grid.innerHTML = '';
+      arr.forEach(function(look, idx) {
+      var card = document.createElement('div');
+      card.className = 'look-card';
+      card.dataset.id = look.id;
+
+      var swatches = swatchSets[idx % swatchSets.length];
+
+      // Build slides: first = look photo, rest = product cards
+      var slides = [];
+
+      // Look photo slide (only first image)
+      var photoSlide = document.createElement('div');
+      photoSlide.className = 'look-slide';
+      photoSlide.innerHTML = '<img src="./' + look.images[0] + '" loading="lazy"/>';
+      slides.push(photoSlide);
+
+      // Product slides
+      look.products.forEach(function(p) {
+        var price = fakePrices[p.code] || '60 €';
+        var ps = document.createElement('div');
+        ps.className = 'look-slide is-product';
+        ps.innerHTML =
+          '<div class="prod-card-img"><img src="' + p.img + '" loading="lazy"/></div>' +
+          '<div class="prod-card-price">' + price + '</div>' +
+          '<div class="prod-card-name">' + p.name + '</div>';
+        slides.push(ps);
+      });
+
+      var total = slides.length;
+
+      // Track
+      var track = document.createElement('div');
+      track.className = 'look-track';
+      track.style.width = (total * 100) + '%';
+      slides.forEach(function(s) {
+        s.style.width = (100 / total) + '%';
+        track.appendChild(s);
+      });
+      card.appendChild(track);
+
+      // Dots
+      var dotsEl = document.createElement('div');
+      dotsEl.className = 'look-dots';
+      for (var d = 0; d < total; d++) {
+        var dot = document.createElement('div');
+        dot.className = 'look-dot' + (d === 0 ? ' active' : '');
+        dotsEl.appendChild(dot);
+      }
+      card.appendChild(dotsEl);
+
+      // Swipe + mouse drag
+      var allDots = dotsEl.querySelectorAll('.look-dot');
+      var cur = 0, sx = 0;
+
+      function goTo(cardTrack, dots, tot, dir) {
+        cur = Math.max(0, Math.min(tot - 1, cur + dir));
+        cardTrack.style.transform = 'translateX(-' + (100 / tot * cur) + '%)';
+        dots.forEach(function(dot, i) { dot.classList.toggle('active', i === cur); });
+      }
+
+      card.addEventListener('touchstart', function(e) { sx = e.touches[0].clientX; }, {passive:true});
+      card.addEventListener('touchend', function(e) {
+        var dx = e.changedTouches[0].clientX - sx;
+        if (Math.abs(dx) > 30) goTo(track, allDots, total, dx < 0 ? 1 : -1);
+      });
+      card.addEventListener('mousedown', function(e) { sx = e.clientX; e.preventDefault(); });
+      card.addEventListener('mouseup', function(e) {
+        var dx = e.clientX - sx;
+        if (Math.abs(dx) > 15) goTo(track, allDots, total, dx < 0 ? 1 : -1);
+      });
+
+      grid.appendChild(card);
+      });
+    } // end buildGrid
+    buildGrid(looks_paris);
+
+    // ── Category chips ──
+    document.querySelectorAll('.cat-chip').forEach(function(c) {
+      c.addEventListener('click', function() {
+        document.querySelectorAll('.cat-chip').forEach(function(x) { x.classList.remove('active'); });
+        c.classList.add('active');
+      });
+    });
+
+    // ── Env tabs ──
+    document.querySelectorAll('.env-tab').forEach(function(t) {
+      t.addEventListener('click', function() {
+        document.querySelectorAll('.env-tab').forEach(function(x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        var label = t.textContent.trim().toLowerCase();
+        if (label === 'parisian mood') {
+          switchLooks(looks_paris);
+        } else {
+          switchLooks(looks_school);
+        }
+      });
+    });
+
+    // ── Bottom bar ──
+    var bar = document.getElementById('products-bar');
+    var allShelves = [];
+    var visibleLooks = [];
+    var observer = null;
+
+    function buildBar(arr) {
+      Array.from(bar.querySelectorAll('.look-shelf')).forEach(function(s) { s.remove(); });
+      allShelves = [];
+      arr.forEach(function(look) {
+        if (!look.products.length) return;
+        var shelf = document.createElement('div');
+        shelf.className = 'look-shelf';
+        shelf.dataset.lookId = look.id;
+        shelf.innerHTML = look.products.map(function(p) {
+          return '<div class="prod-thumb-item" data-code="' + p.code + '"><img class="prod-thumb" src="' + p.img + '" loading="lazy"/></div>';
+        }).join('');
+        bar.appendChild(shelf);
+        allShelves.push(shelf);
+      });
+    }
+
+    function updateBar() {
+      // Reset all items and shelf active state
+      bar.querySelectorAll('.prod-thumb-item').forEach(function(item) { item.style.display = ''; });
+      allShelves.forEach(function(s) { s.classList.remove('active'); });
+      // Mark shelves for visible looks as active
+      visibleLooks.forEach(function(id) {
+        var shelf = bar.querySelector('[data-look-id="' + id + '"]');
+        if (shelf) shelf.classList.add('active');
+      });
+
+      // Dedup: primary look always fully shown, secondary+ hide dupes
+      var seen = {};
+      var primaryId = visibleLooks[0];
+      // Register primary codes first so they're never hidden
+      if (primaryId) {
+        var primaryShelf = bar.querySelector('[data-look-id="' + primaryId + '"]');
+        if (primaryShelf) primaryShelf.querySelectorAll('.prod-thumb-item').forEach(function(item) {
+          seen[item.dataset.code] = true;
+        });
+      }
+      // Then hide dupes in secondary looks
+      visibleLooks.slice(1).forEach(function(id) {
+        var shelf = bar.querySelector('[data-look-id="' + id + '"]');
+        if (!shelf) return;
+        shelf.querySelectorAll('.prod-thumb-item').forEach(function(item) {
+          var code = item.dataset.code;
+          if (seen[code]) { item.style.display = 'none'; } else { seen[code] = true; }
+        });
+      });
+
+      // Look primaire = look visible dont le centre est le plus proche du centre de l'écran
+      var scrollArea = document.getElementById('scroll-area');
+      var scrollMid = scrollArea.getBoundingClientRect().top + scrollArea.getBoundingClientRect().height / 2;
+      var primaryId = visibleLooks.reduce(function(bestId, id) {
+        var card = document.querySelector('.look-card[data-id="' + id + '"]');
+        if (!card) return bestId;
+        var r = card.getBoundingClientRect();
+        var cardMid = r.top + r.height / 2;
+        if (!bestId) return id;
+        var bestCard = document.querySelector('.look-card[data-id="' + bestId + '"]');
+        var bestR = bestCard ? bestCard.getBoundingClientRect() : null;
+        var bestMid = bestR ? bestR.top + bestR.height / 2 : Infinity;
+        return Math.abs(cardMid - scrollMid) < Math.abs(bestMid - scrollMid) ? id : bestId;
+      }, null);
+
+      var centerIdx = primaryId
+        ? allShelves.findIndex(function(s) { return s.dataset.lookId === primaryId; })
+        : -1;
+
+      allShelves.forEach(function(s, i) {
+        var dist = centerIdx !== -1 ? Math.abs(i - centerIdx) : 999;
+        var h = Math.round(48 + 20 * Math.exp(-0.35 * dist * dist));
+        s.style.height = h + 'px';
+      });
+
+      // Centre sur le centre géométrique de TOUS les produits visibles
+      requestAnimationFrame(function() {
+        var allVisibleItems = [];
+        allShelves.forEach(function(s) {
+          if (visibleLooks.indexOf(s.dataset.lookId) !== -1) {
+            Array.from(s.querySelectorAll('.prod-thumb-item')).forEach(function(item) {
+              if (item.style.display !== 'none') allVisibleItems.push(item);
+            });
+          }
+        });
+        if (!allVisibleItems.length) return;
+        var barRect = bar.getBoundingClientRect();
+        var firstRect = allVisibleItems[0].getBoundingClientRect();
+        var lastRect = allVisibleItems[allVisibleItems.length - 1].getBoundingClientRect();
+        var groupCenter = (firstRect.left + lastRect.right) / 2;
+        var target = bar.scrollLeft + groupCenter - barRect.left - barRect.width / 2;
+        bar.scrollTo({ left: target, behavior: 'smooth' });
+      });
+    }
+
+    function observeLooks() {
+      if (observer) observer.disconnect();
+      visibleLooks = [];
+      observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          var id = e.target.dataset.id;
+          if (e.isIntersecting) { if (visibleLooks.indexOf(id) === -1) visibleLooks.push(id); }
+          else { visibleLooks = visibleLooks.filter(function(x) { return x !== id; }); }
+        });
+        updateBar();
+      }, { root: document.getElementById('scroll-area'), threshold: 0.3 });
+      document.querySelectorAll('.look-card').forEach(function(c) { observer.observe(c); });
+    }
+
+    function switchLooks(arr) {
+      document.getElementById('scroll-area').scrollTop = 0;
+      buildGrid(arr);
+      buildBar(arr);
+      observeLooks();
+    }
+
+    buildBar(looks_paris);
+    observeLooks();
+
+    // Click product in bar → scroll to its look
+    bar.addEventListener('click', function(e) {
+      var item = e.target.closest('.prod-thumb-item');
+      if (!item) return;
+      var shelf = item.closest('.look-shelf');
+      if (!shelf) return;
+      var card = document.querySelector('.look-card[data-id="' + shelf.dataset.lookId + '"]');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    // ── Hide nav on scroll down, reveal on scroll up ──
+    var scrollArea = document.getElementById('scroll-area');
+    var lastScrollTop = 0;
+    var ticking = false;
+
+    scrollArea.addEventListener('scroll', function() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function() {
+        var st = scrollArea.scrollTop;
+        if (st > lastScrollTop && st > 20) {
+          document.body.classList.add('nav-collapsed');
+        } else {
+          document.body.classList.remove('nav-collapsed');
+        }
+        lastScrollTop = st;
+        ticking = false;
+      });
+    });
+  </script>
+
+</body>
+</html>
