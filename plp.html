@@ -551,38 +551,6 @@
     buildBar(looks_paris);
     observeLooks();
 
-    // Scroll bar → drive grid
-    var barUserScrollTimer = null;
-    var barDriveTimer = null;
-    bar.addEventListener('scroll', function() {
-      if (barDriving) return;
-      clearTimeout(barUserScrollTimer);
-      barUserScrollTimer = setTimeout(function() {
-        var barRect = bar.getBoundingClientRect();
-        var barCenter = barRect.left + barRect.width / 2;
-        var closest = null;
-        var closestDist = Infinity;
-        allShelves.forEach(function(shelf) {
-          var items = Array.from(shelf.querySelectorAll('.prod-thumb-item')).filter(function(item) {
-            return item.style.display !== 'none';
-          });
-          if (!items.length) return;
-          var firstRect = items[0].getBoundingClientRect();
-          var lastRect = items[items.length - 1].getBoundingClientRect();
-          var shelfCenter = (firstRect.left + lastRect.right) / 2;
-          var dist = Math.abs(shelfCenter - barCenter);
-          if (dist < closestDist) { closestDist = dist; closest = shelf; }
-        });
-        if (!closest) return;
-        var card = document.querySelector('.look-card[data-id="' + closest.dataset.lookId + '"]');
-        if (!card) return;
-        barDriving = true;
-        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        clearTimeout(barDriveTimer);
-        barDriveTimer = setTimeout(function() { barDriving = false; }, 800);
-      }, 120);
-    });
-
     // Click product in bar → scroll to its look
     bar.addEventListener('click', function(e) {
       var item = e.target.closest('.prod-thumb-item');
