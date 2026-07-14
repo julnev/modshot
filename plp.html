@@ -130,6 +130,12 @@
       display: flex; flex-direction: column;
       padding: 0;
       justify-content: flex-start;
+      position: relative;
+    }
+    .wishlist-btn {
+      position: absolute; top: 10px; right: 10px;
+      background: none; border: none; padding: 0; cursor: pointer;
+      line-height: 0; z-index: 2;
     }
     .prod-card-img {
       flex: none;
@@ -345,6 +351,7 @@
         var ps = document.createElement('div');
         ps.className = 'look-slide is-product';
         ps.innerHTML =
+          '<button class="wishlist-btn" aria-label="Add to wishlist"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M24 7H19L16 10L13 7H8L4 13L16 25L28 13L24 7ZM23.465 8L26.713 12.873L16 23.586L5.287 12.873L8.535 8H12.586L15.293 10.707L16 11.414L16.707 10.707L19.414 8H23.465Z" fill="black"/></svg></button>' +
           '<div class="prod-card-img"><img src="' + p.img + '" loading="lazy"/></div>' +
           '<div class="prod-card-price">' + price + '</div>' +
           '<div class="prod-card-name">' + p.name + '</div>';
