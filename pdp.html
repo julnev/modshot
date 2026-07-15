@@ -5,164 +5,486 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
   <title>PDP</title>
   <style>
-    @font-face {
-      font-family: 'FranklinGothic';
-      src: url('./ITCFranklinGothicStd-DmCp.otf') format('opentype');
-    }
+    @font-face { font-family: 'FranklinGothic'; src: url('./ITCFranklinGothicStd-DmCp.otf') format('opentype'); }
+    @font-face { font-family: 'AdihausDIN'; src: url('./AdihausDIN-Regular.ttf') format('truetype'); }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; background: #0f0f0f; overflow: hidden; font-family: 'AdihausDIN', -apple-system, sans-serif; }
 
-    html, body {
-      width: 100%; height: 100%;
-      background: #0f0f0f;
-      font-family: -apple-system, 'Helvetica Neue', sans-serif;
-      overflow: hidden;
-    }
+    /* Image area wrapper — clips the filter drawer */
+    #image-area { position: fixed; top: 0; left: 0; right: 0; bottom: 160px; overflow: hidden; }
 
-    #viewer-wrap {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      bottom: 200px;
-    }
+    /* Carousel */
+    #carousel-wrap { position: absolute; top: 0; left: 0; right: 48px; bottom: 0; overflow: visible; }
+    #carousel-track { display: flex; width: 300%; height: 100%; transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .slide { width: 33.333%; height: 100%; flex-shrink: 0; }
+    .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
 
-    #viewer-wrap spline-viewer {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+    /* Slider bar */
+    #slider-bar { position: fixed; bottom: 156px; left: 0; height: 2px; background: #111; z-index: 20; transition: left 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
 
-    #slider-indicator {
-      position: absolute;
-      bottom: 14px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      z-index: 10;
-      pointer-events: none;
-    }
-    .slide-dot {
-      height: 3px;
-      border-radius: 2px;
-      background: #111;
-      transition: width 0.3s;
-    }
-    .slide-dot.active { width: 28px; }
-    .slide-dot:not(.active) { width: 8px; opacity: 0.3; }
+    /* Bottom panel */
+    #bottom { position: fixed; bottom: 0; left: 0; right: 0; height: 160px; background: #fff; display: flex; flex-direction: column; padding: 12px 20px 20px; z-index: 10; }
 
-    #bottom {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 200px;
-      background: #fff;
-      border-radius: 16px 16px 0 0;
-      display: flex;
-      flex-direction: column;
-      padding: 0 20px 28px;
-      z-index: 10;
-    }
+    #chips-row { display: flex; align-items: center; flex-shrink: 0; margin-bottom: 16px; margin-right: -20px; }
 
-    #handle {
-      width: 36px; height: 4px;
-      background: #e0e0e0;
-      border-radius: 2px;
-      margin: 10px auto 14px;
-      flex-shrink: 0;
-    }
+    .filter-btn { flex-shrink: 0; border: none; background: #fff; padding: 0 10px 0 0; cursor: pointer; display: flex; align-items: center; }
 
-    #chips {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      flex-shrink: 0;
-      margin-bottom: 18px;
-    }
+    #chips { display: flex; align-items: center; gap: 8px; overflow-x: auto; scrollbar-width: none; flex: 1; }
     #chips::-webkit-scrollbar { display: none; }
 
-    .filter-btn {
-      flex-shrink: 0;
-      border: none; background: none;
-      padding: 4px; cursor: pointer;
-      display: flex; align-items: center;
-    }
-
-    .chip {
-      display: inline-block;
-      flex-shrink: 0;
-      padding: 8px 16px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      letter-spacing: 0.02em;
-      border: 1.5px solid #111;
-      transition: background 0.15s, color 0.15s;
-    }
+    .chip { display: inline-block; flex-shrink: 0; padding: 4px 10px; border-radius: 0; font-size: 13px; line-height: 20px; font-family: 'AdihausDIN', sans-serif; cursor: pointer; white-space: nowrap; letter-spacing: 0; border: 1px solid #111; transition: background 0.15s, color 0.15s; }
     .chip.active { background: #111; color: #fff; }
     .chip:not(.active) { background: #fff; color: #111; }
+    .chip.hidden { display: none; }
+    .chip.chip-add { border: none; font-weight: bold; background: transparent; padding-right: 32px; }
 
-    #product { flex: 1; }
-
-    #product-name {
-      font-family: 'FranklinGothic', 'Helvetica Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #111;
-      line-height: 1.1;
-      margin-bottom: 5px;
-    }
+    #product-name { font-family: 'FranklinGothic', sans-serif; font-size: 22px; letter-spacing: 0.04em; text-transform: uppercase; color: #111; line-height: 1.1; margin-bottom: 4px; }
     #product-sub { font-size: 12px; color: #888; margin-bottom: 4px; }
     #product-price { font-size: 13px; font-weight: 600; color: #111; }
+
+    #bottom-overlay {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 160px;
+      background: #000; z-index: 25;
+      pointer-events: none; opacity: 0;
+      transition: opacity 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    /* Filter drawer — covers image area, slides up */
+    #filter-drawer {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #fff;
+      z-index: 10;
+      transform: translateY(100%);
+      transition: transform 0.38s cubic-bezier(0.25,0.46,0.45,0.94);
+      overflow-y: auto;
+    }
+    #filter-drawer.open { transform: translateY(0); }
+
+    #filter-close {
+      position: absolute; top: 20px; right: 20px;
+      background: none; border: none; cursor: pointer; padding: 4px; z-index: 1;
+    }
+
+    #filter-body { padding: 56px 20px 20px; }
+
+    .acc { border-bottom: 1px solid #e0e0e0; }
+    .acc-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 0; cursor: pointer; user-select: none;
+    }
+    .acc-title { font-family: 'FranklinGothic', sans-serif; font-size: 36px; letter-spacing: 0.04em; text-transform: uppercase; color: #111; }
+    .acc-chevron { transition: transform 0.25s; }
+    .acc.open .acc-chevron { transform: rotate(180deg); }
+    .acc-body { display: none; flex-wrap: wrap; gap: 8px; padding-bottom: 20px; }
+    .acc.open .acc-body { display: flex; }
+
+    .fopt {
+      display: inline-block; flex-shrink: 0; padding: 4px 10px;
+      border-radius: 0; font-size: 13px; line-height: 20px;
+      font-family: 'AdihausDIN', sans-serif; cursor: pointer;
+      white-space: nowrap; letter-spacing: 0; border: 1px solid #111;
+      transition: background 0.15s, color 0.15s;
+    }
+    .fopt.checked { background: #111; color: #fff; }
+    .fopt:not(.checked) { background: #fff; color: #111; }
+
+    /* Style With toggles */
+    .style-with-section { padding-top: 36px; }
+    .style-with-label { font-family: 'AdihausDIN', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: #111; margin-bottom: 4px; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid #e0e0e0; }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-name { font-family: 'FranklinGothic', sans-serif; font-size: 32px; letter-spacing: 0.04em; text-transform: uppercase; color: #111; }
+    .toggle { position: relative; width: 30px; height: 17px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+    .toggle-track { position: absolute; inset: 0; background: #e0e0e0; cursor: pointer; transition: background 0.2s; }
+    .toggle-track:before { content: ''; position: absolute; width: 11px; height: 11px; background: #fff; top: 3px; left: 3px; transition: transform 0.2s; }
+    .toggle input:checked ~ .toggle-track { background: #111; }
+    .toggle input:checked ~ .toggle-track:before { transform: translateX(13px); }
+
+    /* Looks grid mode */
+    #looks-grid {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: #0f0f0f;
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      grid-auto-flow: column;
+      grid-auto-columns: calc(33.33vw - 2px);
+      gap: 3px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scrollbar-width: none;
+    }
+    #looks-grid::-webkit-scrollbar { display: none; }
+    .look-thumb { overflow: hidden; cursor: pointer; background: #1a1a1a; }
+    .look-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+
+    /* View toggle button */
+    #view-toggle {
+      position: absolute; bottom: 16px; right: 16px;
+      width: 36px; height: 36px;
+      background: rgba(0,0,0,0.6);
+      border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 5; padding: 0;
+    }
   </style>
 </head>
 <body>
 
-  <div id="viewer-wrap">
-    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.98/build/spline-viewer.js"></script>
-    <spline-viewer url="https://prod.spline.design/xHKVCxbX1Cfv1Suu/scene.splinecode"></spline-viewer>
-    <div id="slider-indicator">
-      <div class="slide-dot active"></div>
-      <div class="slide-dot"></div>
-      <div class="slide-dot"></div>
+  <div id="image-area">
+    <div id="carousel-wrap">
+      <div id="carousel-track"></div>
     </div>
-  </div>
 
-  <div id="bottom">
-    <div id="handle"></div>
-    <div id="chips">
-      <button class="filter-btn" aria-label="Filtres">
-        <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
-          <rect y="0"  width="18" height="2" rx="1" fill="#111"/>
-          <rect y="6"  width="18" height="2" rx="1" fill="#111"/>
-          <rect y="12" width="18" height="2" rx="1" fill="#111"/>
-          <rect x="10" y="-1" width="4" height="4" rx="2" fill="#fff" stroke="#111" stroke-width="1.5"/>
-          <rect x="4"  y="5"  width="4" height="4" rx="2" fill="#fff" stroke="#111" stroke-width="1.5"/>
-          <rect x="10" y="11" width="4" height="4" rx="2" fill="#fff" stroke="#111" stroke-width="1.5"/>
-        </svg>
-      </button>
-      <div class="chip active">Sporty Chic</div>
-      <div class="chip">Casual streetwear</div>
-      <div class="chip">Basic effortless</div>
-      <div class="chip">Evening</div>
+    <!-- Looks grid (hidden by default) -->
+    <div id="looks-grid" style="display:none;"></div>
+
+    <!-- View toggle button -->
+    <button id="view-toggle" aria-label="Toggle view">
+      <!-- grid icon: shown in full mode -->
+      <svg id="toggle-icon-grid" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="0" y="0" width="7.5" height="7.5" fill="white"/>
+        <rect x="10.5" y="0" width="7.5" height="7.5" fill="white"/>
+        <rect x="0" y="10.5" width="7.5" height="7.5" fill="white"/>
+        <rect x="10.5" y="10.5" width="7.5" height="7.5" fill="white"/>
+      </svg>
+      <!-- full icon: shown in grid mode -->
+      <svg id="toggle-icon-full" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none;">
+        <rect x="2" y="2" width="14" height="14" stroke="white" stroke-width="2"/>
+      </svg>
+    </button>
+
+    <!-- Filter drawer -->
+    <div id="filter-drawer">
+    <button id="filter-close">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <line x1="4" y1="4" x2="20" y2="20" stroke="#111" stroke-width="1.5"/>
+        <line x1="20" y1="4" x2="4" y2="20" stroke="#111" stroke-width="1.5"/>
+      </svg>
+    </button>
+    <div id="filter-body">
+
+      <div class="acc">
+        <div class="acc-header">
+          <span class="acc-title">Occasion</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt">Chilling</div>
+          <div class="fopt">Work</div>
+          <div class="fopt">Night Out</div>
+          <div class="fopt">Festival</div>
+          <div class="fopt">Date Night</div>
+          <div class="fopt">Travel</div>
+          <div class="fopt">Workout</div>
+        </div>
+      </div>
+
+      <div class="acc">
+        <div class="acc-header">
+          <span class="acc-title">Location</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt">Paris</div>
+          <div class="fopt">Office</div>
+          <div class="fopt">Hang out spot</div>
+          <div class="fopt">Campus</div>
+          <div class="fopt">Gym</div>
+          <div class="fopt">Mountains</div>
+          <div class="fopt">Countryside</div>
+        </div>
+      </div>
+
+      <div class="acc">
+        <div class="acc-header">
+          <span class="acc-title">Vibe</span>
+          <svg class="acc-chevron" width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="#111" stroke-width="1.5"/></svg>
+        </div>
+        <div class="acc-body">
+          <div class="fopt" data-chip="Casual Streetwear">Casual Streetwear</div>
+          <div class="fopt" data-chip="Sporty Chic">Sporty Chic</div>
+          <div class="fopt" data-chip="Effortless">Effortless</div>
+          <div class="fopt" data-chip="Bold">Bold</div>
+          <div class="fopt" data-chip="Retro">Retro</div>
+        </div>
+      </div>
+
+      <div class="style-with-section">
+        <div class="style-with-label">Style with</div>
+        <div class="toggle-row">
+          <span class="toggle-name">Your Wishlist</span>
+          <label class="toggle">
+            <input type="checkbox" checked/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <span class="toggle-name">Your Closet</span>
+          <label class="toggle">
+            <input type="checkbox"/>
+            <span class="toggle-track"></span>
+          </label>
+        </div>
+      </div>
+
     </div>
-    <div id="product">
-      <div id="product-name">Balloon Long Skirt</div>
+  </div><!-- end filter-drawer -->
+  </div><!-- end image-area -->
+
+  <div id="slider-bar"></div>
+
+  <!-- Bottom panel -->
+  <div id="bottom-overlay"></div>
+  <div id="bottom">
+    <div id="chips-row">
+      <button class="filter-btn" id="filter-open-btn" aria-label="Filtres">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M24 21V24H20V23H8V22H20V21H24ZM18 15H24V16H18V17H14V16H8V15H14V14H18V15ZM12 9H24V10H12V11H8V8H12V9Z" fill="black"/></svg>
+      </button>
+      <div id="chips">
+        <div class="chip active" data-images="pdp/Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg,pdp/Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg,pdp/Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png,pdp/Avatar_KR1389_KS0124_2026-06-23_14-17-33 2.png">Casual Streetwear</div>
+        <div class="chip" data-images="pdp/Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg,pdp/Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg,pdp/Avatar_KR1389_KD3742_2026-06-03_09-39-20 1.png">Sporty Chic</div>
+        <div class="chip" data-images="pdp/Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png,pdp/Avatar_KR1389_JD0245_2026-07-09_16-07-43.jpg,pdp/Avatar_KR1389_KW7991_2026-07-09_16-02-45.jpg">Effortless</div>
+        <div class="chip" data-images="pdp/Avatar_KR1389_KE2761_JC9923_2026-06-02_16-40-57 1.png,pdp/Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png,pdp/Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33.jpg">Bold</div>
+        <div class="chip" data-images="pdp/Avatar_KS8328_KR1389_2026-07-14_18-07-38.jpg,pdp/Avatar_KR1389_KE3356_KD8312_2026-06-24_13-54-55 1.png,pdp/Avatar_KR1376_KR1389_2026-06-03_12-42-42 1.png,pdp/Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg">Retro</div>
+        <div class="chip chip-add"><strong>Add new</strong> &nbsp;+</div>
+      </div>
+    </div>
+    <div>
+      <div id="product-name">ADICOLOR SST COTTON TWILL SHORT</div>
       <div id="product-sub">Originals</div>
       <div id="product-price">120 €</div>
     </div>
   </div>
 
   <script>
-    document.querySelectorAll('.chip').forEach(c => {
-      c.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+    // ── Carousel ──
+    var wrap = document.getElementById('carousel-wrap');
+    var track = document.getElementById('carousel-track');
+    var sliderBar = document.getElementById('slider-bar');
+    var allChips = document.querySelectorAll('.chip');
+    var current = 0, total = 1;
+
+    function updatePeek() {
+      wrap.style.right = (current >= total - 1) ? '0' : '48px';
+    }
+
+    function loadImages(images) {
+      current = 0;
+      total = images.length;
+      track.style.transition = 'none';
+      track.style.width = (total * 100) + '%';
+      track.innerHTML = images.map(function(src) {
+        return '<div class="slide" style="width:' + (100/total) + '%"><img src="./' + src + '"/></div>';
+      }).join('');
+      track.style.transform = 'translateX(0)';
+      sliderBar.style.width = (100 / total) + 'vw';
+      sliderBar.style.left = '0';
+      updatePeek();
+    }
+
+    function goTo(i) {
+      current = Math.max(0, Math.min(total - 1, i));
+      track.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+      track.style.transform = 'translateX(-' + ((100 / total) * current) + '%)';
+      sliderBar.style.left = ((100 / total) * current) + 'vw';
+      updatePeek();
+    }
+
+    function activateNextChip() {
+      var chips = Array.from(document.querySelectorAll('.chip:not(.chip-add)'));
+      var activeIdx = chips.findIndex(function(c) { return c.classList.contains('active'); });
+      var nextChip = chips[activeIdx + 1];
+      if (!nextChip) return;
+      chips.forEach(function(c) { c.classList.remove('active'); });
+      nextChip.classList.add('active');
+      savedActiveChip = nextChip;
+      if (nextChip.dataset.images) loadImages(nextChip.dataset.images.split(','));
+      var chipsEl = document.getElementById('chips');
+      var cr = chipsEl.getBoundingClientRect();
+      var chipR = nextChip.getBoundingClientRect();
+      chipsEl.scrollTo({ left: chipsEl.scrollLeft + chipR.left - cr.left - 16, behavior: 'smooth' });
+    }
+
+    var startX = 0, dragging = false;
+    function onStart(x) { startX = x; dragging = true; track.style.transition = 'none'; }
+    function onMove(x) {
+      if (!dragging) return;
+      var dx = x - startX;
+      var pct = -(100 / total) * current + (dx / wrap.offsetWidth) * (100 / total) * 1.2;
+      track.style.transform = 'translateX(' + pct + '%)';
+    }
+    function onEnd(x) {
+      if (!dragging) return;
+      dragging = false;
+      var dx = x - startX;
+      if (dx < -40 && current >= total - 1) {
+        activateNextChip();
+      } else {
+        goTo(Math.abs(dx) > 40 ? (dx < 0 ? current + 1 : current - 1) : current);
+      }
+    }
+
+    wrap.addEventListener('touchstart', function(e) { onStart(e.touches[0].clientX); }, {passive:true});
+    wrap.addEventListener('touchmove',  function(e) { onMove(e.touches[0].clientX); }, {passive:true});
+    wrap.addEventListener('touchend',   function(e) { onEnd(e.changedTouches[0].clientX); });
+    wrap.addEventListener('mousedown',  function(e) { onStart(e.clientX); });
+    window.addEventListener('mousemove', function(e) { if (dragging) onMove(e.clientX); });
+    window.addEventListener('mouseup',   function(e) { if (dragging) onEnd(e.clientX); });
+
+    allChips.forEach(function(c) {
+      c.addEventListener('click', function() {
+        if (c.classList.contains('chip-add')) return;
+        allChips.forEach(function(x) { x.classList.remove('active'); });
         c.classList.add('active');
+        if (c.dataset.images) loadImages(c.dataset.images.split(','));
+        var chipsEl = document.getElementById('chips');
+        var cr = chipsEl.getBoundingClientRect();
+        var chipR = c.getBoundingClientRect();
+        chipsEl.scrollTo({ left: chipsEl.scrollLeft + chipR.left - cr.left - 16, behavior: 'smooth' });
       });
+    });
+
+    var activeChip = document.querySelector('.chip.active');
+    if (activeChip && activeChip.dataset.images) loadImages(activeChip.dataset.images.split(','));
+
+    // ── Filter drawer ──
+    var drawer = document.getElementById('filter-drawer');
+    var bottomOverlay = document.getElementById('bottom-overlay');
+
+    function openFilter() { syncFilterToActive(); drawer.classList.add('open'); bottomOverlay.style.opacity = '0.4'; }
+    function closeFilter() { drawer.classList.remove('open'); bottomOverlay.style.opacity = '0'; }
+
+    document.getElementById('filter-open-btn').addEventListener('click', openFilter);
+    document.getElementById('filter-close').addEventListener('click', closeFilter);
+
+    document.querySelectorAll('.acc-header').forEach(function(h) {
+      h.addEventListener('click', function() {
+        h.parentElement.classList.toggle('open');
+      });
+    });
+
+    document.querySelectorAll('.fopt').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        if (!opt.dataset.chip) return;
+        // Switch active chip
+        var target = document.querySelector('.chip[data-images][data-chip-label="' + opt.dataset.chip + '"]') ||
+          Array.from(allChips).find(function(c) { return c.textContent.trim() === opt.dataset.chip; });
+        if (target) {
+          allChips.forEach(function(x) { x.classList.remove('active'); });
+          target.classList.add('active');
+          if (target.dataset.images) loadImages(target.dataset.images.split(','));
+        }
+        closeFilter();
+      });
+    });
+
+    function syncFilterToActive() {
+      var activeLabel = '';
+      var active = document.querySelector('.chip.active');
+      if (active) activeLabel = active.textContent.trim();
+      document.querySelectorAll('.fopt').forEach(function(o) {
+        o.classList.toggle('checked', o.dataset.chip === activeLabel);
+      });
+    }
+
+    // ── Looks grid ──
+    // Ordered to alternate backgrounds and outfit colors across the 2-row grid
+    var pdpLooks = [
+      // col 1 — warm café interior / outdoor festival denim
+      'Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png',
+      'Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg',
+      // col 2 — Seoul night market red / rooftop sunset red
+      'Avatar_KR1389_KE2761_JC9923_2026-06-02_16-40-57 1.png',
+      'Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png',
+      // col 3 — indoor staircase beige / park path blue polo
+      'Avatar_KE0095_KR1389_2026-06-03_12-43-10 1.png',
+      'Avatar_KR1389_KE3356_2026-06-24_15-36-46 1.png',
+      // col 4 — Paris boulevard dark blazer / Tokyo yellow cardigan
+      'Avatar_JJ0296_KR1389_2026-06-24_10-01-11 2.png',
+      'Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33.jpg',
+      // col 5 — subway navy grey / dark cobblestone alley green
+      'Avatar_KR1389_IY9649_KV5402_2026-06-23_12-45-57 1.png',
+      'Avatar_KR1389_KW7991_2026-07-09_16-02-45.jpg',
+      // col 6 — concrete alley blue monogram / Euro square golden dusk
+      'Avatar_KR1389_KD0397_2026-06-24_16-07-01 3.png',
+      'Avatar_KR1389_KC6436_IA7534_2026-06-24_15-58-14 1.png',
+      // col 7 — Paris tree avenue grey hoodie / dark urban night
+      'Avatar_KR1389_JD0245_2026-07-09_16-07-43.jpg',
+      'Avatar_KR1389_2026-06-03_09-39-52 1.png',
+      // col 8 — indoor staircase green windbreaker / NYC subway warm brown
+      'Avatar_KR1376_KR1389_2026-06-03_12-42-42 1.png',
+      'Avatar_KR1389_KS4957_KV4447_2026-06-02_16-55-32 1.png',
+      // col 9 — sunny street walk / Asian convenience store
+      'Avatar_KE3154_KR1389_2026-06-25_14-02-04 1.png',
+      'Avatar_KR1389_KE3356_KD8312_2026-06-24_13-54-55 1.png',
+      // col 10 — NYC grey sidewalk / Euro shopping street night
+      'Avatar_KR1389_KC6480_2026-06-24_16-02-11 1.png',
+      'Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg',
+      // col 11 — Paris cobblestone denim / NYC subway green pillars
+      'Avatar_KD8786_KR1389_2026-06-24_10-05-27_Generated 1.png',
+      'Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg',
+      // col 12 — Asian underpass cream / Seoul daytime street
+      'Avatar_KR1389_KW2055_KD3698_2026-06-02_16-41-30 1.png',
+      'Avatar_KR1389_IW5707_2026-06-23_12-44-07 1.png',
+      // col 13 — NYC subway Fulton pink/pearl / Paris Haussmann grey
+      'Avatar_KR1389_KD3742_2026-06-03_09-39-20 1.png',
+      'Avatar_KR1389_KS0124_2026-06-23_14-17-33 2.png',
+      // col 14 — Paris cobblestone blue SST / outdoor market
+      'Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg',
+      'Group 1000006555.png',
+      // col 15 — sporty chic
+      'Avatar_HZ1008_KR1389_2026-07-14_22-47-59.jpg',
+    ];
+
+    var looksGridEl = document.getElementById('looks-grid');
+    var viewToggleBtn = document.getElementById('view-toggle');
+    var iconGrid = document.getElementById('toggle-icon-grid');
+    var iconFull = document.getElementById('toggle-icon-full');
+    var viewMode = 'full';
+    var savedActiveChip = null;
+
+    (function buildLooksGrid() {
+      pdpLooks.forEach(function(filename) {
+        var url = 'pdp/' + encodeURIComponent(filename);
+        var card = document.createElement('div');
+        card.className = 'look-thumb';
+        var img = document.createElement('img');
+        img.src = url;
+        card.appendChild(img);
+        card.addEventListener('click', function() {
+          setView('full');
+          loadImages([url]);
+        });
+        looksGridEl.appendChild(card);
+      });
+    })();
+
+    function setView(mode) {
+      viewMode = mode;
+      var carouselWrap = document.getElementById('carousel-wrap');
+      if (mode === 'grid') {
+        carouselWrap.style.display = 'none';
+        looksGridEl.style.display = 'grid';
+        sliderBar.style.display = 'none';
+        iconGrid.style.display = 'none';
+        iconFull.style.display = '';
+        savedActiveChip = document.querySelector('.chip.active');
+        if (savedActiveChip) savedActiveChip.classList.remove('active');
+      } else {
+        carouselWrap.style.display = '';
+        looksGridEl.style.display = 'none';
+        sliderBar.style.display = '';
+        iconGrid.style.display = '';
+        iconFull.style.display = 'none';
+        if (savedActiveChip) savedActiveChip.classList.add('active');
+      }
+    }
+
+    viewToggleBtn.addEventListener('click', function() {
+      setView(viewMode === 'full' ? 'grid' : 'full');
     });
   </script>
 
