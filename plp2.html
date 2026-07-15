@@ -179,8 +179,7 @@
       position: fixed; bottom: 0; left: 0; right: 0;
       height: 80px;
       background: #EAEEEF;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
+
       display: flex; align-items: flex-end;
       padding: 0 4px; gap: 0;
       overflow-x: auto; scrollbar-width: none;
@@ -205,7 +204,7 @@
     }
     .look-shelf { border-bottom: 2px solid transparent; }
     .prod-thumb {
-      width: 62px; height: 76px;
+      width: 56px; height: 68px;
       object-fit: contain; display: block;
     }
 
@@ -257,7 +256,7 @@
       <button class="header-icon" id="btn-incontext" aria-label="In context view">
         <img src="UI32pt/incontext.svg" width="24" height="24"/>
       </button>
-      <button class="header-icon" style="margin-left:5px;">
+      <button class="header-icon" style="margin-left:8px;">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="1.5"/><line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#111" stroke-width="1.5"/></svg>
       </button>
     </div>
@@ -299,6 +298,7 @@
     <div id="classic-grid"></div>
   </div>
 
+  <div id="bar-fill"></div>
   <div id="products-bar"></div>
 
   <script>
@@ -326,9 +326,9 @@
 
     var looks_paris = [
       { id:'p0',  images:["paris/Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg"],   products:[{"code":"KC6432","name":"LACE LONG-SLEEVE JERSEY","img":"school/KC6432_FC_eCom.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
-      { id:'p1',  images:["paris/Avatar_KE3584_KA2673_2026-05-22_09-15-37 2.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KA2673","name":"SATIN SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KA2673/0d39825f7f2e4e28a6ab96fc981d5d14_9366/original.jpg"}] },
+      { id:'p1',  images:["paris/Avatar_KE1651_KF2341_2026-06-25_11-48-58 3.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"KF2341","name":"ATHLETIC DEPT KNITTED SWEATER","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KF2341/88a7b015895f4fa0bf922362a35993dd_9366/original.jpg"}] },
       { id:'p2',  images:["paris/Avatar_KD8313_KE3440_2026-06-25_09-53-28 4.png"],   products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KE3440","name":"BALLOON SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3440/c132e4af945a482fb8042bdf3acf0699_9366/original.jpg"}] },
-      { id:'p3',  images:["paris/Avatar_KE1651_KF2341_2026-06-25_11-48-58 3.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"KF2341","name":"ATHLETIC DEPT KNITTED SWEATER","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KF2341/88a7b015895f4fa0bf922362a35993dd_9366/original.jpg"}] },
+      { id:'p3',  images:["paris/Avatar_KE3584_KA2673_2026-05-22_09-15-37 2.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KA2673","name":"SATIN SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KA2673/0d39825f7f2e4e28a6ab96fc981d5d14_9366/original.jpg"}] },
       { id:'p4',  images:["paris/Avatar_KW0122_KD7964_2026-06-29_17-24-07 3.png"],   products:[{"code":"KW0122","name":"SPRINTER SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW0122/ea993c14075944289a39b510998cdbd5_9366/original.jpg"},{"code":"KD7964","name":"3-STRIPES LONG SLEEVE T-SHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD7964/353d4550363842c8bd401bad0aab1959_9366/original.jpg"}] },
       { id:'p5',  images:["paris/Avatar_KG3699_KS6562_2026-05-18_11-05-03 1.png"],   products:[{"code":"KG3699","name":"SST BABY TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KG3699/90fff785aba64eb3b980f464ec4defc3_9366/original.jpg"},{"code":"KS6562","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6562/251edb57407348ffb26f8373714f3a63_9366/original.jpg"}] },
       { id:'p6',  images:["paris/Avatar_KE3584_LD1811_2026-05-21_11-36-05 1.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"LD1811","name":"SATIN LACE SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/LD1811/1fbd36752eb34528bc5297c693264d09_9366/original.jpg"}] },
@@ -393,7 +393,7 @@
         ps.className = 'look-slide is-product';
         ps.innerHTML =
           '<button class="wishlist-btn" aria-label="Add to wishlist"><img src="UI32pt/Heart.svg" width="32" height="32"/></button>' +
-          '<div class="prod-card-img"><img src="' + p.img + '" loading="lazy"/></div>' +
+          '<div class="prod-card-img"><img src="' + productImg(p.code) + '" loading="lazy"/></div>' +
           '<div class="prod-card-price">' + price + '</div>' +
           '<div class="prod-card-name">' + p.name + '</div>';
         slides.push(ps);
@@ -485,7 +485,7 @@
         shelf.className = 'look-shelf';
         shelf.dataset.lookId = look.id;
         shelf.innerHTML = look.products.map(function(p) {
-          return '<div class="prod-thumb-item" data-code="' + p.code + '"><img class="prod-thumb" src="' + p.img + '" loading="lazy"/></div>';
+          return '<div class="prod-thumb-item" data-code="' + p.code + '"><img class="prod-thumb" src="' + productImg(p.code) + '" loading="lazy"/></div>';
         }).join('');
         bar.appendChild(shelf);
         allShelves.push(shelf);
@@ -592,6 +592,10 @@
     buildBar(looks_paris);
     observeLooks();
 
+    function productImg(code) {
+      return 'products/' + code + '_FC_eCom.jpeg';
+    }
+
     // ── Classic grid ──
     var classicGrid = document.getElementById('classic-grid');
     var plpMode = 'classic';
@@ -625,6 +629,7 @@
       plpMode = mode;
       var looksGrid = document.getElementById('grid');
       var productsBar = document.getElementById('products-bar');
+      var barFill = document.getElementById('bar-fill');
       var btnGrid = document.getElementById('btn-grid');
       var btnIncontext = document.getElementById('btn-incontext');
       var envNav = document.getElementById('env-nav');
@@ -634,6 +639,7 @@
         looksGrid.style.display = 'none';
         classicGrid.style.display = 'grid';
         productsBar.style.display = 'none';
+        barFill.style.display = 'none';
         btnGrid.style.display = 'none';
         btnIncontext.style.display = '';
         envNav.style.display = 'none';
@@ -645,6 +651,7 @@
         looksGrid.style.display = '';
         classicGrid.style.display = 'none';
         productsBar.style.display = '';
+        barFill.style.display = '';
         btnGrid.style.display = '';
         btnIncontext.style.display = 'none';
         envNav.style.display = '';
@@ -667,7 +674,7 @@
     };
 
     document.getElementById('btn-grid').addEventListener('click', function() { setPlpMode('classic'); });
-    document.getElementById('btn-incontext').addEventListener('click', function() { setPlpMode('looks'); });
+    document.getElementById('btn-incontext').addEventListener('click', function() { setPlpMode('looks'); document.getElementById('scroll-area').scrollTop = 0; });
 
     // Click product in bar → scroll to its look
     bar.addEventListener('click', function(e) {
