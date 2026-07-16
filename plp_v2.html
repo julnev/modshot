@@ -9,7 +9,7 @@
     @font-face { font-family: 'AdihausDIN'; src: url('./AdihausDIN-Regular.ttf') format('truetype'); }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; background: #EAEEEF; font-family: 'AdihausDIN', -apple-system, sans-serif; overflow: hidden; }
+    html, body { width: 100%; height: 100%; background: #fff; font-family: 'AdihausDIN', -apple-system, sans-serif; overflow: hidden; }
 
     /* ── Header ── */
     #header {
@@ -20,13 +20,13 @@
       z-index: 100;
     }
     .header-icon { background: none; border: none; cursor: pointer; padding: 4px; display: flex; align-items: center; }
-    #header-center { text-align: center; }
+    #header-center { position: absolute; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
     #header-title { font-family: 'FranklinGothic', sans-serif; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #111; }
     #header-sub { font-size: 11px; color: #888; }
 
     /* ── Environment nav ── */
     #env-nav {
-      position: fixed; top: 52px; left: 0; right: 0;
+      position: fixed; top: 55px; left: 0; right: 0;
       height: 40px; background: #fff;
       display: flex; align-items: flex-end;
       overflow-x: auto; overflow-y: hidden; scrollbar-width: none;
@@ -57,7 +57,7 @@
 
     /* ── Filter chips ── */
     #filter-row {
-      position: fixed; top: 92px; left: 0; right: 0;
+      position: fixed; top: 104px; left: 0; right: 0;
       height: 48px; background: #fff;
       display: flex; align-items: center;
       padding: 0 16px;
@@ -67,8 +67,8 @@
     }
 
     /* ── Scroll-collapse state ── */
-    body.nav-collapsed #env-nav   { transform: translateY(-40px); }
-    body.nav-collapsed #filter-row { transform: translateY(-88px); }
+    body.nav-collapsed #env-nav   { transform: translateY(-43px); }
+    body.nav-collapsed #filter-row { transform: translateY(-100px); }
     body.nav-collapsed #scroll-area { top: 52px; }
     .filter-btn {
       flex-shrink: 0; border: none; background: none;
@@ -89,7 +89,7 @@
 
     /* ── Looks grid ── */
     #scroll-area {
-      position: fixed; top: 140px; left: 0; right: 0; bottom: 80px;
+      position: fixed; top: 152px; left: 0; right: 0; bottom: 80px;
       overflow-y: auto; overflow-x: hidden;
       -webkit-overflow-scrolling: touch;
       transition: top 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
@@ -142,6 +142,7 @@
       height: 62%;
       display: flex; align-items: center; justify-content: center;
       background: #EAEEEF;
+      padding: 16px;
     }
     .prod-card-img img {
       width: 100%; height: 100%; object-fit: contain; display: block;
@@ -179,8 +180,7 @@
       position: fixed; bottom: 0; left: 0; right: 0;
       height: 80px;
       background: #EAEEEF;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
+
       display: flex; align-items: flex-end;
       padding: 0 4px; gap: 0;
       overflow-x: auto; scrollbar-width: none;
@@ -205,7 +205,7 @@
     }
     .look-shelf { border-bottom: 2px solid transparent; }
     .prod-thumb {
-      width: 62px; height: 76px;
+      width: 56px; height: 68px;
       object-fit: contain; display: block;
     }
 
@@ -213,7 +213,7 @@
     #classic-grid {
       display: none;
       grid-template-columns: 1fr 1fr;
-      gap: 2px; padding: 2px 2px 80px;
+      gap: 2px; padding: 0;
     }
     .classic-card { background: #fff; cursor: pointer; position: relative; }
     .classic-card-img {
@@ -251,24 +251,14 @@
       <div id="header-sub">153 results</div>
     </div>
     <div style="display:flex;align-items:center;gap:4px;">
-      <button class="header-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="1.5"/><line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#111" stroke-width="1.5"/></svg>
+      <button class="header-icon" id="btn-grid" aria-label="Grid view" style="display:none;">
+        <img src="UI32pt/grid.svg" width="19" height="19"/>
       </button>
-      <button class="header-icon" id="plp-view-toggle" aria-label="Toggle view">
-        <svg id="icon-classic" width="24" height="24" viewBox="0 0 24 24" fill="none" style="display:none;">
-          <rect x="3" y="3" width="8" height="8" stroke="#111" stroke-width="1.5"/>
-          <rect x="13" y="3" width="8" height="8" stroke="#111" stroke-width="1.5"/>
-          <rect x="3" y="13" width="8" height="8" stroke="#111" stroke-width="1.5"/>
-          <rect x="13" y="13" width="8" height="8" stroke="#111" stroke-width="1.5"/>
-        </svg>
-        <svg id="icon-looks" width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <polygon points="12,3 21,8.5 12,14 3,8.5" stroke="#111" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
-          <line x1="3" y1="8.5" x2="3" y2="15.5" stroke="#111" stroke-width="1.5"/>
-          <line x1="21" y1="8.5" x2="21" y2="15.5" stroke="#111" stroke-width="1.5"/>
-          <line x1="12" y1="14" x2="12" y2="21" stroke="#111" stroke-width="1.5"/>
-          <line x1="3" y1="15.5" x2="12" y2="21" stroke="#111" stroke-width="1.5"/>
-          <line x1="21" y1="15.5" x2="12" y2="21" stroke="#111" stroke-width="1.5"/>
-        </svg>
+      <button class="header-icon" id="btn-incontext" aria-label="In context view">
+        <img src="UI32pt/incontext.svg" width="24" height="24"/>
+      </button>
+      <button class="header-icon" style="margin-left:8px;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#111" stroke-width="1.5"/><line x1="16.5" y1="16.5" x2="22" y2="22" stroke="#111" stroke-width="1.5"/></svg>
       </button>
     </div>
   </div>
@@ -309,6 +299,7 @@
     <div id="classic-grid"></div>
   </div>
 
+  <div id="bar-fill"></div>
   <div id="products-bar"></div>
 
   <script>
@@ -324,10 +315,10 @@
       { id: 'l7',  images: ['school/Avatar_KD5523_KW4387_2026-06-25_17-05-08 2.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KW4387","name":"MUNICH 93 CREW NECK SWEATSHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW4387/3f7d0659f74f4fefa3fe66db99439340_9366/original.jpg"}] },
       { id: 'l8',  images: ['school/Avatar_KE3584_KE2923_2026-05-21_10-05-45 1.png'], products: [{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KE2923","name":"ADICOLOR CLASSICS 3-STRIPES CARGO PANTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE2923/4ea6bc7206024c27b2d18944dd360c1a_9366/original.jpg"}] },
       { id: 'l9',  images: ['school/Avatar_KD3816_KQ6469_2026-07-04_23-54-02 1.png'], products: [{"code":"KD3816","name":"ARCHIVE LOOSE GOALKEEPER JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD3816/60c2308495f3492eb84e518621ac6afc_9366/original.jpg"}] },
-      { id: 'l10', images: ['school/Avatar_KD8313_KQ5499_KE3441_2026-06-25_09-52-55 2.png'], products: [{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KQ5499","name":"FB KNIT TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KQ5499/e0fc1342c85b43acb647a911d96ff45c_9366/original.jpg"}] },
+      { id: 'l10', images: ['school/Avatar_KD8313_KQ5499_KE3441_2026-06-25_09-52-55 2.png'], products: [{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KQ5499","name":"FB KNIT TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KQ5499/e0fc1342c85b43acb647a911d96ff45c_9366/original.jpg"},{"code":"KE3441","name":"BALLOON LONG SKIRT","img":"school/KE3441_FC_eCom.jpg"}] },
       { id: 'l11', images: ['school/Avatar_KG6450_KR7657_KC6436_2026-06-25_14-26-19 1.png'], products: [{"code":"KG6450","name":"ORIGINALS DENIM WORK PANT","img":"school/KG6450_FC_eCom.png"},{"code":"KR7657","name":"RETRO REMIX TEAMGEIST POLO","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR7657/e809b759d42a40dbb05baadd3a3e2250_9366/original.jpg"},{"code":"KC6436","name":"CHEST STRIPES TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC6436/9a32987bb0fa483182ceb61ee182a3c9_9366/original.jpg"}] },
       { id: 'l12', images: ['school/Avatar_KD5523_KR7228_2026-06-25_17-03-14 3.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KR7228","name":"FIREBIRD PINSTRIPES TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR7228/5e9d0d3707de4572a543a0663a45b96c_9366/original.jpg"}] },
-      { id: 'l13', images: ['school/Avatar_KR1389_KD0397_2026-06-24_16-07-01 2.png'], products: [{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"},{"code":"KD0397","name":"DENIM MONOGRAM SHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD0397/420bce8ad8d843e7afafe1f094f45b65_9366/original.jpg"}] },
+      { id: 'l13', images: ['school/Avatar_KS4968_KR1389_2026-07-15_08-41-40.jpg'], products: [{"code":"KS4968","name":"ADICOLOR SST TRACK TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS4968/original.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
       { id: 'l14', images: ['school/Avatar_KG6450_KE2445_JV7735_2026-06-25_14-15-46 1.png'], products: [{"code":"KG6450","name":"ORIGINALS DENIM WORK PANT","img":"school/KG6450_FC_eCom.png"},{"code":"KE2445","name":"3-STRIPES RUGBY LONGSLEEVE POLO","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE2445/402a5c0a81e3465f95862d7e12ca2635_9366/original.jpg"},{"code":"JV7735","name":"TARTAN REGULAR JACKET","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/JV7735/fc71906114b3476683479c78e856ce2b_9366/original.jpg"}] },
       { id: 'l15', images: ['school/Avatar_KD5523_KS1343_2026-07-07_09-59-35 2.png'], products: [{"code":"KD5523","name":"DENIM PLEATED SKIRT","img":"school/KD5523_FC_eCom.png"},{"code":"KS1343","name":"SONG FOR THE MUTE 007 LONG SLEEVE TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS1343/c778dc3a62bf4e8eb465bbf2d34ce324_9366/original.jpg"}] },
       { id: 'l16', images: ['school/Avatar_KE3584_KF6248_KD8313_2026-07-05_11-01-57 1.png'], products: [{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"}] },
@@ -335,14 +326,14 @@
     ];
 
     var looks_paris = [
-      { id:'p0',  images:["paris/Avatar_KR1389_KS0124_2026-06-23_14-17-33 4.png"],   products:[{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"},{"code":"KS0124","name":"RUNNING BANDANA","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS0124/4249ac24c6c74ca3882283f27abfb81b_9366/original.jpg"}] },
-      { id:'p1',  images:["paris/Avatar_KE3584_KA2673_2026-05-22_09-15-37 2.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KA2673","name":"SATIN SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KA2673/0d39825f7f2e4e28a6ab96fc981d5d14_9366/original.jpg"}] },
+      { id:'p0',  images:["paris/Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg"],   products:[{"code":"KC6432","name":"LACE LONG-SLEEVE JERSEY","img":"school/KC6432_FC_eCom.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
+      { id:'p1',  images:["paris/Avatar_KE1651_KF2341_2026-06-25_11-48-58 3.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"KF2341","name":"ATHLETIC DEPT KNITTED SWEATER","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KF2341/88a7b015895f4fa0bf922362a35993dd_9366/original.jpg"}] },
       { id:'p2',  images:["paris/Avatar_KD8313_KE3440_2026-06-25_09-53-28 4.png"],   products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KE3440","name":"BALLOON SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3440/c132e4af945a482fb8042bdf3acf0699_9366/original.jpg"}] },
-      { id:'p3',  images:["paris/Avatar_KE1651_KF2341_2026-06-25_11-48-58 3.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"KF2341","name":"ATHLETIC DEPT KNITTED SWEATER","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KF2341/88a7b015895f4fa0bf922362a35993dd_9366/original.jpg"}] },
+      { id:'p3',  images:["paris/Avatar_KE3584_KA2673_2026-05-22_09-15-37 2.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"KA2673","name":"SATIN SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KA2673/0d39825f7f2e4e28a6ab96fc981d5d14_9366/original.jpg"}] },
       { id:'p4',  images:["paris/Avatar_KW0122_KD7964_2026-06-29_17-24-07 3.png"],   products:[{"code":"KW0122","name":"SPRINTER SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KW0122/ea993c14075944289a39b510998cdbd5_9366/original.jpg"},{"code":"KD7964","name":"3-STRIPES LONG SLEEVE T-SHIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD7964/353d4550363842c8bd401bad0aab1959_9366/original.jpg"}] },
       { id:'p5',  images:["paris/Avatar_KG3699_KS6562_2026-05-18_11-05-03 1.png"],   products:[{"code":"KG3699","name":"SST BABY TEE","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KG3699/90fff785aba64eb3b980f464ec4defc3_9366/original.jpg"},{"code":"KS6562","name":"ADIDAS ORIGINALS TULLE SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KS6562/251edb57407348ffb26f8373714f3a63_9366/original.jpg"}] },
       { id:'p6',  images:["paris/Avatar_KE3584_LD1811_2026-05-21_11-36-05 1.png"],   products:[{"code":"KE3584","name":"ARCHIVE COLLAR ENGINEERED JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3584/4f9c658226c647f581e6ed8f79a67110_9366/original.jpg"},{"code":"LD1811","name":"SATIN LACE SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/LD1811/1fbd36752eb34528bc5297c693264d09_9366/original.jpg"}] },
-      { id:'p7',  images:["paris/Avatar_KD8313_KC8869_KE3441_2026-06-25_16-25-39 1.png"], products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KC8869","name":"OFF-SHOULDER LONG SLEEVE TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC8869/6fbae356eeb3425484bf59f35500194f_9366/original.jpg"},{"code":"KE3441","name":"BALLOON LONG SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KE3441/7941dddf886446288c4499f48adabda9_9366/original.jpg"}] },
+      { id:'p7',  images:["paris/Avatar_KD8313_KC8869_KE3441_2026-06-25_16-25-39 1.png"], products:[{"code":"KD8313","name":"FIREBIRD TRACK JACKET","img":"school/KD8313_FC_eCom.png"},{"code":"KC8869","name":"OFF-SHOULDER LONG SLEEVE TOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KC8869/6fbae356eeb3425484bf59f35500194f_9366/original.jpg"},{"code":"KE3441","name":"BALLOON LONG SKIRT","img":"school/KE3441_FC_eCom.jpg"}] },
       { id:'p8',  images:["paris/Avatar_KD8786_KR1389_2026-06-24_10-05-27_Generated 2.png"], products:[{"code":"KD8786","name":"PLEATHER CORSET","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD8786/6528b82389be402ba237a0eaa6ff8ab7_9366/original.jpg"},{"code":"KR1389","name":"ADICOLOR SST COTTON TWILL SHORTS","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KR1389/601e5a081ff24fb4ba42dadf1222b62e_9366/original.jpg"}] },
       { id:'p9',  images:["paris/Avatar_KE1651_HZ3779_2026-05-19_10-03-36 2.png"],   products:[{"code":"KE1651","name":"FIREBIRD TRACK PANTS","img":"school/KE1651_FC_eCom.png"},{"code":"HZ3779","name":"BRITCORE SUPERSTAR TRACKTOP","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/HZ3779/167d11d33caa4726a8f3605e76097988_9366/original.jpg"}] },
       { id:'p10', images:["paris/Avatar_KD3816_KD5446_2026-06-25_13-39-22 1.png"],   products:[{"code":"KD3816","name":"ARCHIVE LOOSE GOALKEEPER JERSEY","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD3816/60c2308495f3492eb84e518621ac6afc_9366/original.jpg"},{"code":"KD5446","name":"TWILL PLEATED SKIRT","img":"https://d1aa6oxc7vj1pr.cloudfront.net/prd/KD5446/fdc8aaed60ba468a9a5d49ed18f17576_9366/original.jpg"}] },
@@ -403,7 +394,7 @@
         ps.className = 'look-slide is-product';
         ps.innerHTML =
           '<button class="wishlist-btn" aria-label="Add to wishlist"><img src="UI32pt/Heart.svg" width="32" height="32"/></button>' +
-          '<div class="prod-card-img"><img src="' + p.img + '" loading="lazy"/></div>' +
+          '<div class="prod-card-img"><img src="' + productImg(p.code) + '" loading="lazy"/></div>' +
           '<div class="prod-card-price">' + price + '</div>' +
           '<div class="prod-card-name">' + p.name + '</div>';
         slides.push(ps);
@@ -495,7 +486,7 @@
         shelf.className = 'look-shelf';
         shelf.dataset.lookId = look.id;
         shelf.innerHTML = look.products.map(function(p) {
-          return '<div class="prod-thumb-item" data-code="' + p.code + '"><img class="prod-thumb" src="' + p.img + '" loading="lazy"/></div>';
+          return '<div class="prod-thumb-item" data-code="' + p.code + '"><img class="prod-thumb" src="' + productImg(p.code) + '" loading="lazy"/></div>';
         }).join('');
         bar.appendChild(shelf);
         allShelves.push(shelf);
@@ -506,24 +497,33 @@
       // Reset all items and shelf active state
       bar.querySelectorAll('.prod-thumb-item').forEach(function(item) { item.style.display = ''; });
       allShelves.forEach(function(s) { s.classList.remove('active'); });
-      // Mark shelves for visible looks as active
       visibleLooks.forEach(function(id) {
         var shelf = bar.querySelector('[data-look-id="' + id + '"]');
         if (shelf) shelf.classList.add('active');
       });
 
-      // Dedup: primary look always fully shown, secondary+ hide dupes
+      // Look primaire = le plus proche du centre de l'écran (calculé AVANT le dédup)
+      var scrollArea = document.getElementById('scroll-area');
+      var scrollMid = scrollArea.getBoundingClientRect().top + scrollArea.getBoundingClientRect().height / 2;
+      var primaryId = visibleLooks.reduce(function(bestId, id) {
+        var card = document.querySelector('.look-card[data-id="' + id + '"]');
+        if (!card) return bestId;
+        var cardMid = card.getBoundingClientRect().top + card.getBoundingClientRect().height / 2;
+        if (!bestId) return id;
+        var bestCard = document.querySelector('.look-card[data-id="' + bestId + '"]');
+        var bestMid = bestCard ? bestCard.getBoundingClientRect().top + bestCard.getBoundingClientRect().height / 2 : Infinity;
+        return Math.abs(cardMid - scrollMid) < Math.abs(bestMid - scrollMid) ? id : bestId;
+      }, null);
+
+      // Dédup : le look primaire est toujours affiché complet, les autres cachent les doublons
       var seen = {};
-      var primaryId = visibleLooks[0];
-      // Register primary codes first so they're never hidden
       if (primaryId) {
         var primaryShelf = bar.querySelector('[data-look-id="' + primaryId + '"]');
         if (primaryShelf) primaryShelf.querySelectorAll('.prod-thumb-item').forEach(function(item) {
           seen[item.dataset.code] = true;
         });
       }
-      // Then hide dupes in secondary looks
-      visibleLooks.slice(1).forEach(function(id) {
+      visibleLooks.filter(function(id) { return id !== primaryId; }).forEach(function(id) {
         var shelf = bar.querySelector('[data-look-id="' + id + '"]');
         if (!shelf) return;
         shelf.querySelectorAll('.prod-thumb-item').forEach(function(item) {
@@ -532,32 +532,16 @@
         });
       });
 
-      // Look primaire = look visible dont le centre est le plus proche du centre de l'écran
-      var scrollArea = document.getElementById('scroll-area');
-      var scrollMid = scrollArea.getBoundingClientRect().top + scrollArea.getBoundingClientRect().height / 2;
-      var primaryId = visibleLooks.reduce(function(bestId, id) {
-        var card = document.querySelector('.look-card[data-id="' + id + '"]');
-        if (!card) return bestId;
-        var r = card.getBoundingClientRect();
-        var cardMid = r.top + r.height / 2;
-        if (!bestId) return id;
-        var bestCard = document.querySelector('.look-card[data-id="' + bestId + '"]');
-        var bestR = bestCard ? bestCard.getBoundingClientRect() : null;
-        var bestMid = bestR ? bestR.top + bestR.height / 2 : Infinity;
-        return Math.abs(cardMid - scrollMid) < Math.abs(bestMid - scrollMid) ? id : bestId;
-      }, null);
-
+      // Animation hauteur en fonction de la distance au look primaire
       var centerIdx = primaryId
         ? allShelves.findIndex(function(s) { return s.dataset.lookId === primaryId; })
         : -1;
-
       allShelves.forEach(function(s, i) {
         var dist = centerIdx !== -1 ? Math.abs(i - centerIdx) : 999;
-        var h = Math.round(48 + 20 * Math.exp(-0.35 * dist * dist));
-        s.style.height = h + 'px';
+        s.style.height = Math.round(48 + 20 * Math.exp(-0.35 * dist * dist)) + 'px';
       });
 
-      // Centre sur le centre géométrique de TOUS les produits visibles
+      // Centre la barre sur tous les produits visibles
       if (barDriving) return;
       requestAnimationFrame(function() {
         var allVisibleItems = [];
@@ -570,11 +554,8 @@
         });
         if (!allVisibleItems.length) return;
         var barRect = bar.getBoundingClientRect();
-        var firstRect = allVisibleItems[0].getBoundingClientRect();
-        var lastRect = allVisibleItems[allVisibleItems.length - 1].getBoundingClientRect();
-        var groupCenter = (firstRect.left + lastRect.right) / 2;
-        var target = bar.scrollLeft + groupCenter - barRect.left - barRect.width / 2;
-        bar.scrollTo({ left: target, behavior: 'smooth' });
+        var groupCenter = (allVisibleItems[0].getBoundingClientRect().left + allVisibleItems[allVisibleItems.length - 1].getBoundingClientRect().right) / 2;
+        bar.scrollTo({ left: bar.scrollLeft + groupCenter - barRect.left - barRect.width / 2, behavior: 'smooth' });
       });
     }
 
@@ -601,6 +582,10 @@
 
     buildBar(looks_paris);
     observeLooks();
+
+    function productImg(code) {
+      return 'products/' + code + '_FC_eCom.jpeg';
+    }
 
     // ── Classic grid ──
     var classicGrid = document.getElementById('classic-grid');
@@ -635,18 +620,36 @@
       plpMode = mode;
       var looksGrid = document.getElementById('grid');
       var productsBar = document.getElementById('products-bar');
+      var barFill = document.getElementById('bar-fill');
+      var btnGrid = document.getElementById('btn-grid');
+      var btnIncontext = document.getElementById('btn-incontext');
+      var envNav = document.getElementById('env-nav');
+      var filterRow = document.getElementById('filter-row');
+      var scrollArea = document.getElementById('scroll-area');
       if (mode === 'classic') {
         looksGrid.style.display = 'none';
         classicGrid.style.display = 'grid';
         productsBar.style.display = 'none';
-        document.getElementById('icon-classic').style.display = 'none';
-        document.getElementById('icon-looks').style.display = '';
+        barFill.style.display = 'none';
+        btnGrid.style.display = 'none';
+        btnIncontext.style.display = '';
+        envNav.style.display = 'none';
+        filterRow.style.top = '52px';
+        scrollArea.style.top = '100px';
+        scrollArea.style.bottom = '0';
+        document.body.style.background = '#fff';
       } else {
         looksGrid.style.display = '';
         classicGrid.style.display = 'none';
         productsBar.style.display = '';
-        document.getElementById('icon-classic').style.display = '';
-        document.getElementById('icon-looks').style.display = 'none';
+        barFill.style.display = '';
+        btnGrid.style.display = '';
+        btnIncontext.style.display = 'none';
+        envNav.style.display = '';
+        filterRow.style.top = '';
+        scrollArea.style.top = '';
+        scrollArea.style.bottom = '';
+        document.body.style.background = '';
       }
     }
 
@@ -661,9 +664,8 @@
       buildClassicGrid(arr);
     };
 
-    document.getElementById('plp-view-toggle').addEventListener('click', function() {
-      setPlpMode(plpMode === 'classic' ? 'looks' : 'classic');
-    });
+    document.getElementById('btn-grid').addEventListener('click', function() { setPlpMode('classic'); });
+    document.getElementById('btn-incontext').addEventListener('click', function() { setPlpMode('looks'); document.getElementById('scroll-area').scrollTop = 0; });
 
     // Click product in bar → scroll to its look
     bar.addEventListener('click', function(e) {
@@ -687,8 +689,10 @@
         var st = scrollArea.scrollTop;
         if (st > lastScrollTop && st > 20) {
           document.body.classList.add('nav-collapsed');
+          if (plpMode === 'classic') scrollArea.style.top = '52px';
         } else {
           document.body.classList.remove('nav-collapsed');
+          if (plpMode === 'classic') scrollArea.style.top = '100px';
         }
         lastScrollTop = st;
         ticking = false;

@@ -19,6 +19,9 @@
     #carousel-track { display: flex; width: 300%; height: 100%; transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
     .slide { width: 33.333%; height: 100%; flex-shrink: 0; }
     .slide img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+    #carousel-wrap.product-mode .slide:first-child { background: #EAEEEF; display: flex; align-items: center; justify-content: center; padding: 40px 32px; }
+    #carousel-wrap.product-mode .slide:first-child img { width: 100%; height: 100%; object-fit: contain; object-position: center center; }
+
 
     /* Slider bar */
     #slider-bar { position: fixed; bottom: 156px; left: 0; height: 2px; background: #111; z-index: 20; transition: left 0.35s cubic-bezier(0.25,0.46,0.45,0.94); }
@@ -205,10 +208,10 @@
         </div>
         <div class="acc-body">
           <div class="fopt" data-chip="Casual Streetwear">Casual Streetwear</div>
-          <div class="fopt" data-chip="Sporty Chic">Sporty Chic</div>
-          <div class="fopt" data-chip="Effortless">Effortless</div>
           <div class="fopt" data-chip="Bold">Bold</div>
           <div class="fopt" data-chip="Retro">Retro</div>
+          <div class="fopt" data-chip="Sporty Chic">Sporty Chic</div>
+          <div class="fopt" data-chip="Basic Effortless">Basic Effortless</div>
         </div>
       </div>
 
@@ -244,11 +247,11 @@
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M24 21V24H20V23H8V22H20V21H24ZM18 15H24V16H18V17H14V16H8V15H14V14H18V15ZM12 9H24V10H12V11H8V8H12V9Z" fill="black"/></svg>
       </button>
       <div id="chips">
-        <div class="chip active" data-images="pdp/Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg,pdp/Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg,pdp/Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png,pdp/Avatar_KR1389_KS0124_2026-06-23_14-17-33 2.png">Casual Streetwear</div>
-        <div class="chip" data-images="pdp/Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg,pdp/Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg,pdp/Avatar_KR1389_KD3742_2026-06-03_09-39-20 1.png">Sporty Chic</div>
-        <div class="chip" data-images="pdp/Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png,pdp/Avatar_KR1389_JD0245_2026-07-09_16-07-43.jpg,pdp/Avatar_KR1389_KW7991_2026-07-09_16-02-45.jpg">Effortless</div>
-        <div class="chip" data-images="pdp/Avatar_KR1389_KE2761_JC9923_2026-06-02_16-40-57 1.png,pdp/Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png,pdp/Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33.jpg">Bold</div>
-        <div class="chip" data-images="pdp/Avatar_KS8328_KR1389_2026-07-14_18-07-38.jpg,pdp/Avatar_KR1389_KE3356_KD8312_2026-06-24_13-54-55 1.png,pdp/Avatar_KR1376_KR1389_2026-06-03_12-42-42 1.png,pdp/Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg">Retro</div>
+        <div class="chip" data-images="pdp/Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg,pdp/Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png,pdp/Avatar_KR1389_IW5707_2026-06-23_12-44-07 1.png,pdp/Avatar_JJ0296_KR1389_2026-06-24_10-01-11 2.png">Casual Streetwear</div>
+        <div class="chip" data-images="pdp/Avatar_HZ1008_KR1389_2026-07-14_22-47-59.jpg,pdp/Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33 1.jpg,pdp/Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg,pdp/Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg">Bold</div>
+        <div class="chip" data-images="pdp/Avatar_KS4968_KR1389_2026-07-15_08-41-40.jpg,pdp/Avatar_KS8328_KR1389_2026-07-14_18-07-38 1.jpg,pdp/Avatar_KR1389_KE2445_2026-06-24_13-54-22.jpg,pdp/Avatar_KR1376_KR1389_2026-06-03_12-42-42 1 1.jpg">Retro</div>
+        <div class="chip" data-images="pdp/Avatar_KR1389_KD3742_2026-06-03_09-39-20 2.png,pdp/Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg,pdp/Avatar_KE0095_KR1389_2026-06-03_12-43-10 1.png,pdp/Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg">Sporty Chic</div>
+        <div class="chip" data-images="pdp/Avatar_KX1879_KR1389_2026-07-15_11-30-19.jpg,pdp/Avatar_KR1389_JW0159_2026-07-09_16-02-14_edited.jpg,pdp/Avatar_KE3154_KR1389_2026-06-25_13-27-41.jpg,pdp/Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 2.png">Basic Effortless</div>
         <div class="chip chip-add"><strong>Add new</strong> &nbsp;+</div>
       </div>
     </div>
@@ -265,24 +268,51 @@
     var track = document.getElementById('carousel-track');
     var sliderBar = document.getElementById('slider-bar');
     var allChips = document.querySelectorAll('.chip');
-    var current = 0, total = 1;
+    var current = 0, total = 1, peekCount = 0, gridLookIndex = -1;
 
     function updatePeek() {
       wrap.style.right = (current >= total - 1) ? '0' : '48px';
     }
 
-    function loadImages(images) {
-      current = 0;
+    function loadImages(images, startIndex) {
+      var idx = (startIndex > 0 && startIndex < images.length) ? startIndex : 0;
+      current = idx;
       total = images.length;
       track.style.transition = 'none';
       track.style.width = (total * 100) + '%';
       track.innerHTML = images.map(function(src) {
         return '<div class="slide" style="width:' + (100/total) + '%"><img src="./' + src + '"/></div>';
       }).join('');
-      track.style.transform = 'translateX(0)';
+      var offset = (100 / total) * current;
+      track.style.transform = 'translateX(-' + offset + '%)';
       sliderBar.style.width = (100 / total) + 'vw';
-      sliderBar.style.left = '0';
+      sliderBar.style.left = offset + 'vw';
       updatePeek();
+    }
+
+    function getNextChipPeek(chip) {
+      var chips = Array.from(document.querySelectorAll('.chip:not(.chip-add)'));
+      var idx = chips.indexOf(chip);
+      var next = chips[idx + 1];
+      return next && next.dataset.images ? next.dataset.images.split(',')[0] : null;
+    }
+
+    function loadImagesForChip(chip) {
+      var imgs = chip.dataset.images ? chip.dataset.images.split(',') : [];
+      var peek = getNextChipPeek(chip);
+      peekCount = peek ? 1 : 0;
+      gridLookIndex = -1;
+      loadImages(peek ? imgs.concat([peek]) : imgs);
+    }
+
+    function loadGridLook(i) {
+      if (i < 0 || i >= pdpLooks.length) return;
+      gridLookIndex = i;
+      var imgs = ['pdp/' + encodeURIComponent(pdpLooks[i])];
+      var hasNext = i + 1 < pdpLooks.length;
+      if (hasNext) imgs.push('pdp/' + encodeURIComponent(pdpLooks[i + 1]));
+      peekCount = hasNext ? 1 : 0;
+      loadImages(imgs, 0);
     }
 
     function goTo(i) {
@@ -301,7 +331,17 @@
       chips.forEach(function(c) { c.classList.remove('active'); });
       nextChip.classList.add('active');
       savedActiveChip = nextChip;
-      if (nextChip.dataset.images) loadImages(nextChip.dataset.images.split(','));
+      var imgs = nextChip.dataset.images ? nextChip.dataset.images.split(',') : [];
+      var peek = getNextChipPeek(nextChip);
+      var allImgs = peek ? imgs.concat([peek]) : imgs;
+      // Animate peek to fill screen (still in old track), then swap
+      var oldTotal = total;
+      track.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+      track.style.transform = 'translateX(-' + ((100 / oldTotal) * (oldTotal - 1)) + '%)';
+      setTimeout(function() {
+        peekCount = peek ? 1 : 0;
+        loadImages(allImgs, 0);
+      }, 350);
       var chipsEl = document.getElementById('chips');
       var cr = chipsEl.getBoundingClientRect();
       var chipR = nextChip.getBoundingClientRect();
@@ -316,12 +356,72 @@
       var pct = -(100 / total) * current + (dx / wrap.offsetWidth) * (100 / total) * 1.2;
       track.style.transform = 'translateX(' + pct + '%)';
     }
+    function activateFirstChip() {
+      var first = document.querySelector('.chip:not(.chip-add)');
+      if (!first) return;
+      document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+      first.classList.add('active');
+      savedActiveChip = first;
+      wrap.classList.remove('product-mode');
+      loadImagesForChip(first);
+    }
+
+    function activatePrevChip() {
+      var chips = Array.from(document.querySelectorAll('.chip:not(.chip-add)'));
+      var activeIdx = chips.findIndex(function(c) { return c.classList.contains('active'); });
+      if (activeIdx <= 0) {
+        chips.forEach(function(c) { c.classList.remove('active'); });
+        savedActiveChip = null;
+        wrap.classList.add('product-mode');
+        peekCount = firstChipPeek ? 1 : 0;
+        // Rebuild at index 1 (firstChipImg), animate back to 0 (productImg)
+        loadImages(productModeImgs, 1);
+        track.getBoundingClientRect();
+        goTo(0);
+        return;
+      }
+      var prevChip = chips[activeIdx - 1];
+      chips.forEach(function(c) { c.classList.remove('active'); });
+      prevChip.classList.add('active');
+      savedActiveChip = prevChip;
+      var imgs = prevChip.dataset.images ? prevChip.dataset.images.split(',') : [];
+      var peek = getNextChipPeek(prevChip);
+      var allImgs = peek ? imgs.concat([peek]) : imgs;
+      peekCount = peek ? 1 : 0;
+      loadImages(allImgs, imgs.length > 1 ? imgs.length - 1 : 0);
+      var chipsEl = document.getElementById('chips');
+      var cr = chipsEl.getBoundingClientRect();
+      var chipR = prevChip.getBoundingClientRect();
+      chipsEl.scrollTo({ left: chipsEl.scrollLeft + chipR.left - cr.left - 16, behavior: 'smooth' });
+    }
+
     function onEnd(x) {
       if (!dragging) return;
       dragging = false;
       var dx = x - startX;
-      if (dx < -40 && current >= total - 1) {
-        activateNextChip();
+      if (dx < -40 && wrap.classList.contains('product-mode') && current === 0) {
+        wrap.classList.remove('product-mode');
+        if (firstChip) {
+          document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+          firstChip.classList.add('active');
+          savedActiveChip = firstChip;
+        }
+        goTo(1);
+      } else if (dx < -40 && current >= total - 1 - peekCount && !wrap.classList.contains('product-mode')) {
+        if (gridLookIndex >= 0) {
+          var oldTotal = total;
+          track.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+          track.style.transform = 'translateX(-' + ((100 / oldTotal) * (oldTotal - 1)) + '%)';
+          setTimeout(function() { loadGridLook(gridLookIndex + 1); }, 350);
+        } else {
+          activateNextChip();
+        }
+      } else if (dx > 40 && current === 0 && !wrap.classList.contains('product-mode')) {
+        if (gridLookIndex >= 0) {
+          loadGridLook(gridLookIndex - 1);
+        } else {
+          activatePrevChip();
+        }
       } else {
         goTo(Math.abs(dx) > 40 ? (dx < 0 ? current + 1 : current - 1) : current);
       }
@@ -339,7 +439,8 @@
         if (c.classList.contains('chip-add')) return;
         allChips.forEach(function(x) { x.classList.remove('active'); });
         c.classList.add('active');
-        if (c.dataset.images) loadImages(c.dataset.images.split(','));
+        gridLookIndex = -1;
+        loadImagesForChip(c);
         var chipsEl = document.getElementById('chips');
         var cr = chipsEl.getBoundingClientRect();
         var chipR = c.getBoundingClientRect();
@@ -347,18 +448,27 @@
       });
     });
 
-    var activeChip = document.querySelector('.chip.active');
-    if (activeChip && activeChip.dataset.images) loadImages(activeChip.dataset.images.split(','));
+    var productImg = 'pdp/KR1389_FC_eCom.png';
+    var firstChip = document.querySelector('.chip:not(.chip-add)');
+    var firstChipImages = firstChip && firstChip.dataset.images ? firstChip.dataset.images.split(',') : [];
+    var firstChipPeek = firstChip ? getNextChipPeek(firstChip) : null;
+    var productModeImgs = [productImg].concat(firstChipImages).concat(firstChipPeek ? [firstChipPeek] : []);
+    peekCount = firstChipPeek ? 1 : 0;
+    loadImages(productModeImgs);
+    wrap.classList.add('product-mode');
 
     // ── Filter drawer ──
     var drawer = document.getElementById('filter-drawer');
     var bottomOverlay = document.getElementById('bottom-overlay');
 
-    function openFilter() { syncFilterToActive(); drawer.classList.add('open'); bottomOverlay.style.opacity = '0.4'; }
-    function closeFilter() { drawer.classList.remove('open'); bottomOverlay.style.opacity = '0'; }
+    function openFilter() { syncFilterToActive(); drawer.classList.add('open'); bottomOverlay.style.opacity = '0.4'; bottomOverlay.style.pointerEvents = 'auto'; }
+    function closeFilter() { drawer.classList.remove('open'); bottomOverlay.style.opacity = '0'; bottomOverlay.style.pointerEvents = 'none'; }
 
-    document.getElementById('filter-open-btn').addEventListener('click', openFilter);
+    document.getElementById('filter-open-btn').addEventListener('click', function(e) { e.stopPropagation(); openFilter(); });
     document.getElementById('filter-close').addEventListener('click', closeFilter);
+    document.getElementById('filter-drawer').addEventListener('click', function(e) { e.stopPropagation(); });
+    document.addEventListener('click', function() { if (drawer.classList.contains('open')) closeFilter(); });
+    bottomOverlay.addEventListener('click', closeFilter);
 
     document.querySelectorAll('.acc-header').forEach(function(h) {
       h.addEventListener('click', function() {
@@ -390,53 +500,42 @@
       });
     }
 
-    // ── Looks grid ──
-    // Ordered to alternate backgrounds and outfit colors across the 2-row grid
+    // ── Looks grid — source: /Users/neveujul/Code/Avatars_jul2/pdp ──
     var pdpLooks = [
-      // col 1 — warm café interior / outdoor festival denim
-      'Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png',
-      'Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg',
-      // col 2 — Seoul night market red / rooftop sunset red
-      'Avatar_KR1389_KE2761_JC9923_2026-06-02_16-40-57 1.png',
-      'Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png',
-      // col 3 — indoor staircase beige / park path blue polo
-      'Avatar_KE0095_KR1389_2026-06-03_12-43-10 1.png',
-      'Avatar_KR1389_KE3356_2026-06-24_15-36-46 1.png',
-      // col 4 — Paris boulevard dark blazer / Tokyo yellow cardigan
-      'Avatar_JJ0296_KR1389_2026-06-24_10-01-11 2.png',
-      'Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33.jpg',
-      // col 5 — subway navy grey / dark cobblestone alley green
-      'Avatar_KR1389_IY9649_KV5402_2026-06-23_12-45-57 1.png',
-      'Avatar_KR1389_KW7991_2026-07-09_16-02-45.jpg',
-      // col 6 — concrete alley blue monogram / Euro square golden dusk
-      'Avatar_KR1389_KD0397_2026-06-24_16-07-01 3.png',
-      'Avatar_KR1389_KC6436_IA7534_2026-06-24_15-58-14 1.png',
-      // col 7 — Paris tree avenue grey hoodie / dark urban night
-      'Avatar_KR1389_JD0245_2026-07-09_16-07-43.jpg',
-      'Avatar_KR1389_2026-06-03_09-39-52 1.png',
-      // col 8 — indoor staircase green windbreaker / NYC subway warm brown
-      'Avatar_KR1376_KR1389_2026-06-03_12-42-42 1.png',
-      'Avatar_KR1389_KS4957_KV4447_2026-06-02_16-55-32 1.png',
-      // col 9 — sunny street walk / Asian convenience store
-      'Avatar_KE3154_KR1389_2026-06-25_14-02-04 1.png',
-      'Avatar_KR1389_KE3356_KD8312_2026-06-24_13-54-55 1.png',
-      // col 10 — NYC grey sidewalk / Euro shopping street night
-      'Avatar_KR1389_KC6480_2026-06-24_16-02-11 1.png',
-      'Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg',
-      // col 11 — Paris cobblestone denim / NYC subway green pillars
-      'Avatar_KD8786_KR1389_2026-06-24_10-05-27_Generated 1.png',
-      'Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg',
-      // col 12 — Asian underpass cream / Seoul daytime street
-      'Avatar_KR1389_KW2055_KD3698_2026-06-02_16-41-30 1.png',
-      'Avatar_KR1389_IW5707_2026-06-23_12-44-07 1.png',
-      // col 13 — NYC subway Fulton pink/pearl / Paris Haussmann grey
-      'Avatar_KR1389_KD3742_2026-06-03_09-39-20 1.png',
-      'Avatar_KR1389_KS0124_2026-06-23_14-17-33 2.png',
-      // col 14 — Paris cobblestone blue SST / outdoor market
-      'Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg',
-      'Group 1000006555.png',
-      // col 15 — sporty chic
       'Avatar_HZ1008_KR1389_2026-07-14_22-47-59.jpg',
+      'Avatar_JJ0296_KR1389_2026-06-24_10-01-11 2.png',
+      'Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg',
+      'Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg',
+      'Avatar_KE0095_KR1389_2026-06-03_12-43-10 1.png',
+      'Avatar_KE3154_KR1389_2026-06-25_13-27-41.jpg',
+      'Avatar_KR1376_KR1389_2026-06-03_12-42-42 1 1.jpg',
+      'Avatar_KR1389_2026-06-03_09-39-52 1.png',
+      'Avatar_KR1389_IW5707_2026-06-23_12-44-07 1.png',
+      'Avatar_KR1389_IY9649_KV5402_2026-06-23_12-45-57 1.png',
+      'Avatar_KR1389_JD0245_2026-07-09_16-07-43.jpg',
+      'Avatar_KR1389_JW0159_2026-07-09_16-02-14_edited.jpg',
+      'Avatar_KR1389_KC6436_IA7534_2026-06-24_15-58-14 1.png',
+      'Avatar_KR1389_KC6480_2026-06-24_16-02-11 1.png',
+      'Avatar_KR1389_KD0397_2026-06-24_16-07-01 1.png',
+      'Avatar_KR1389_KD0743_2026-07-14_13-42-59.jpg',
+      'Avatar_KR1389_KD3742_2026-06-03_09-39-20 1.png',
+      'Avatar_KR1389_KD4063_KS4777_2026-06-03_09-41-23 1.png',
+      'Avatar_KR1389_KD5829_KC8524_2026-07-14_12-46-30 1.png',
+      'Avatar_KR1389_KE2445_2026-06-24_13-54-22.jpg',
+      'Avatar_KR1389_KE2761_JC9923_2026-06-02_16-40-57 1.png',
+      'Avatar_KR1389_KE3356_2026-06-24_15-36-46 1.png',
+      'Avatar_KR1389_KE3356_KD8312_2026-06-24_13-54-55 1.png',
+      'Avatar_KR1389_KS0124_2026-06-23_14-17-33 2.png',
+      'Avatar_KR1389_KS4957_KV4447_2026-06-02_16-55-32 1.png',
+      'Avatar_KR1389_KW2055_KD3698_2026-06-02_16-41-30 1.png',
+      'Avatar_KR1389_KW7991_2026-07-09_16-02-45.jpg',
+      'Avatar_KS4968_KD6235_KR1389_2026-07-14_18-17-33 1.jpg',
+      'Avatar_KS4968_KR1389_2026-07-15_08-41-40.jpg',
+      'Avatar_KS4970_KD8786_KR1389_2026-07-08_15-55-35.jpg',
+      'Avatar_KS8328_KR1389_2026-07-14_18-07-38 1.jpg',
+      'Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg',
+      'Avatar_KX1879_KR1389_2026-07-15_11-30-19.jpg',
+      'Avatar_KE2493_KR1389_2026-07-15_22-31-37.jpg',
     ];
 
     var looksGridEl = document.getElementById('looks-grid');
@@ -447,17 +546,19 @@
     var savedActiveChip = null;
 
     (function buildLooksGrid() {
-      pdpLooks.forEach(function(filename) {
+      pdpLooks.forEach(function(filename, idx) {
         var url = 'pdp/' + encodeURIComponent(filename);
         var card = document.createElement('div');
         card.className = 'look-thumb';
         var img = document.createElement('img');
         img.src = url;
         card.appendChild(img);
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(i) { return function() {
           setView('full');
-          loadImages([url]);
-        });
+          document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+          savedActiveChip = null;
+          loadGridLook(i);
+        }; }(idx));
         looksGridEl.appendChild(card);
       });
     })();
