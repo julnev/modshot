@@ -307,6 +307,7 @@
 
     function loadGridLook(i) {
       if (i < 0 || i >= pdpLooks.length) return;
+      wrap.classList.remove('product-mode');
       gridLookIndex = i;
       var imgs = ['pdp/' + encodeURIComponent(pdpLooks[i])];
       var hasNext = i + 1 < pdpLooks.length;
@@ -505,7 +506,7 @@
       'Avatar_HZ1008_KR1389_2026-07-14_22-47-59.jpg',
       'Avatar_JJ0296_KR1389_2026-06-24_10-01-11 2.png',
       'Avatar_KC6432_KR1389_2026-07-15_08-32-53.jpg',
-      'Avatar_KD6235_KR1389_2026-07-09_16-46-51.jpg',
+      'Avatar_KE2493_KR1389_2026-07-15_22-31-37.jpg',
       'Avatar_KE0095_KR1389_2026-06-03_12-43-10 1.png',
       'Avatar_KE3154_KR1389_2026-06-25_13-27-41.jpg',
       'Avatar_KR1376_KR1389_2026-06-03_12-42-42 1 1.jpg',
@@ -535,7 +536,7 @@
       'Avatar_KS8328_KR1389_2026-07-14_18-07-38 1.jpg',
       'Avatar_KT4749_KR1389_2026-07-14_18-26-57.jpg',
       'Avatar_KX1879_KR1389_2026-07-15_11-30-19.jpg',
-      'Avatar_KE2493_KR1389_2026-07-15_22-31-37.jpg',
+      'Avatar_KD6235_KR1389_2026-07-09_16-46-51_2.jpg',
     ];
 
     var looksGridEl = document.getElementById('looks-grid');
